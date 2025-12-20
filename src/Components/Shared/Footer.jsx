@@ -1,0 +1,179 @@
+import React from "react";
+import { Link } from "react-router";
+import {
+  FaFacebookF,
+  FaTwitter,
+  FaInstagram,
+  FaPhone,
+  FaEnvelope,
+  FaMapMarkerAlt,
+} from "react-icons/fa";
+import { motion } from "framer-motion";
+
+const Footer = () => {
+  const contact = {
+    phone: "+880 17XX XXX XXX",
+    email: "support@localchef.com",
+    address: "123 Homecook Plaza, Dhaka, Bangladesh",
+  };
+
+  const workingHours = [
+    { day: "Mon - Fri", hours: "9:00 AM - 10:00 PM" },
+    { day: "Sat - Sun", hours: "10:00 AM - 11:00 PM" },
+  ];
+
+  const socialLinks = [
+    {
+      icon: FaFacebookF,
+      url: "https://facebook.com/localchef",
+      color: "text-blue-600",
+    },
+    {
+      icon: FaTwitter,
+      url: "https://twitter.com/localchef",
+      color: "text-blue-400",
+    },
+    {
+      icon: FaInstagram,
+      url: "https://instagram.com/localchef",
+      color: "text-pink-600",
+    },
+  ];
+
+  return (
+    <motion.footer
+      className="bg-gray-800 dark:bg-gray-900 text-gray-300 border-t border-orange-600/30 pt-10 pb-4 transition-colors duration-300"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, delay: 0.2 }}
+    >
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 border-b border-gray-700 pb-8">
+          <div className="space-y-4">
+            <Link
+              to="/"
+              className="flex items-center space-x-2 text-2xl font-bold text-orange-500 hover:text-orange-400 transition-colors"
+            >
+              <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 2a8 8 0 100 16A8 8 0 0010 2zm0 14a6 6 0 110-12 6 6 0 010 12zM9 9h2v4H9V9z" />
+              </svg>
+              <span>LocalChefBazaar</span>
+            </Link>
+            <p className="text-sm">
+              Connecting you with the best homemade, local meals. Fresh,
+              affordable, and made with love.
+            </p>
+
+            <div className="flex space-x-4 pt-2">
+              {socialLinks.map((link, index) => {
+                const Icon = link.icon;
+                return (
+                  <motion.a
+                    key={index}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`p-2 rounded-full bg-gray-700 hover:bg-white transition-colors duration-300 ${link.color} hover:shadow-lg`}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <Icon className="text-xl" />
+                  </motion.a>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-white border-b-2 border-orange-500/50 pb-1">
+              Quick Links
+            </h3>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link
+                  to="/"
+                  className="hover:text-orange-500 transition-colors"
+                >
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/meals"
+                  className="hover:text-orange-500 transition-colors"
+                >
+                  Meals
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/about"
+                  className="hover:text-orange-500 transition-colors"
+                >
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/contact"
+                  className="hover:text-orange-500 transition-colors"
+                >
+                  Contact
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-white border-b-2 border-orange-500/50 pb-1">
+              Get In Touch
+            </h3>
+            <ul className="space-y-2 text-sm">
+              <li className="flex items-start gap-3">
+                <FaPhone className="text-orange-500 mt-1 flex-shrink-0" />
+                <p>{contact.phone}</p>
+              </li>
+              <li className="flex items-start gap-3">
+                <FaEnvelope className="text-orange-500 mt-1 flex-shrink-0" />
+                <p>{contact.email}</p>
+              </li>
+              <li className="flex items-start gap-3">
+                <FaMapMarkerAlt className="text-orange-500 mt-1 flex-shrink-0" />
+                <p>{contact.address}</p>
+              </li>
+            </ul>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-white border-b-2 border-orange-500/50 pb-1">
+              Working Hours
+            </h3>
+            <ul className="space-y-2 text-sm">
+              {workingHours.map((item, index) => (
+                <li key={index} className="flex justify-between">
+                  <span className="font-medium text-gray-400">{item.day}:</span>
+                  <span className="text-white">{item.hours}</span>
+                </li>
+              ))}
+              <li className="pt-2 text-xs text-orange-500 font-medium">
+                We are always online for orders!
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="pt-4 text-center text-sm text-gray-500 dark:text-gray-400">
+          <p>
+            &copy; {new Date().getFullYear()} LocalChefBazaar. All rights
+            reserved.
+          </p>
+          <p className="mt-1 text-xs">
+            Developed for the MERN Stack Project Assessment.
+          </p>
+        </div>
+      </div>
+    </motion.footer>
+  );
+};
+
+export default Footer;
