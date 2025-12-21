@@ -90,17 +90,28 @@ const AuthProvider = ({ children }) => {
 
   const signInEmail = async (email, password) => {
     setLoading(true);
-    const cred = await signInWithEmailAndPassword(auth, email, password);
-    setUser(cred.user);
-    await createJWT(cred.user);
-    // Fetch user from DB
-    const res = await axios.get(`${SERVER_URL}/users/${cred.user.email}`, {
-      withCredentials: true,
-    });
-    setDbUser(res.data);
-    setLoading(false);
-  };
+    try {
+      const cred = await signInWithEmailAndPassword(auth, email, password);
+      setUser(cred.user);
 
+      // 2. JWT Generation
+      await createJWT(cred.user);
+
+      try {
+        const res = await axios.get(`${SERVER_URL}/users/${cred.user.email}`, {
+          withCredentials: true,
+        });
+        setDbUser(res.data);
+      } catch (dbErr) {
+        console.warn("DB user not found, continuing with Firebase user only.");
+        setDbUser(null);
+      }
+
+      return cred.user;
+    } finally {
+      setLoading(false);
+    }
+  };
   const signInGoogle = async () => {
     setLoading(true);
     const provider = new GoogleAuthProvider();
