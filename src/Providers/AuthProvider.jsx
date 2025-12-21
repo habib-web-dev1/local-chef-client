@@ -93,21 +93,16 @@ const AuthProvider = ({ children }) => {
     try {
       const cred = await signInWithEmailAndPassword(auth, email, password);
       setUser(cred.user);
-
-      // 2. JWT Generation
       await createJWT(cred.user);
 
-      try {
-        const res = await axios.get(`${SERVER_URL}/users/${cred.user.email}`, {
-          withCredentials: true,
-        });
-        setDbUser(res.data);
-      } catch (dbErr) {
-        console.warn("DB user not found, continuing with Firebase user only.");
-        setDbUser(null);
-      }
-
+      const res = await axios.get(`${SERVER_URL}/users/${cred.user.email}`, {
+        withCredentials: true,
+      });
+      setDbUser(res.data);
       return cred.user;
+    } catch (error) {
+      console.error("Login/Fetch error:", error);
+      setDbUser(null);
     } finally {
       setLoading(false);
     }
