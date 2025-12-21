@@ -2,7 +2,7 @@ import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
 export const AuthContext = createContext(null);
 
-const SERVER_URL = "http://localhost:5000";
+const SERVER_URL = "https://local-chef-server.vercel.app";
 const API_BASE = `${SERVER_URL}`;
 
 const mockAuth = {

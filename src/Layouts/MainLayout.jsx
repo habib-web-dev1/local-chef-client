@@ -1,7 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router";
 
-import { ToastContainer } from "react-toastify"; /
+import { ToastContainer } from "react-toastify";
 import Container from "../Components/Shared/Container";
 import Navbar from "../Components/Shared/Navbar";
 import Footer from "../Components/Shared/Footer";
