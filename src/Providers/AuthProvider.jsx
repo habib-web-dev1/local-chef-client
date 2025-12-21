@@ -2,14 +2,15 @@ import React, { createContext, useState, useEffect, useContext } from "react";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  onAuthStateChanged,
   signOut,
-  updateProfile,
+  onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
+  updateProfile,
 } from "firebase/auth";
 import auth from "../Firebase/firebase.config";
 import axios from "axios";
+
 export const AuthContext = createContext(null);
 export const useAuth = () => useContext(AuthContext);
 
@@ -20,106 +21,127 @@ const AuthProvider = ({ children }) => {
   const [dbUser, setDbUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const getJwtToken = async (currentUser) => {
-    try {
-      const userInfo = {
+  const createJWT = async (currentUser) => {
+    await axios.post(
+      `${SERVER_URL}/auth/jwt`,
+      {
         email: currentUser.email,
         uid: currentUser.uid,
-      };
+      },
+      { withCredentials: true }
+    );
+  };
 
-      await axios.post(`${SERVER_URL}/jwt`, userInfo, {
+  const clearJWT = async () => {
+    await axios.post(
+      `${SERVER_URL}/auth/logout`,
+      {},
+      { withCredentials: true }
+    );
+  };
+
+  const createUser = async (email, password, displayName) => {
+    setLoading(true);
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, email, password);
+      const currentUser = cred.user;
+
+      if (displayName) {
+        await updateProfile(currentUser, { displayName });
+      }
+
+      await createJWT(currentUser);
+
+      await axios.post(`${SERVER_URL}/users`, {
+        email: currentUser.email,
+        uid: currentUser.uid,
+        displayName: currentUser.displayName,
+        photoURL: currentUser.photoURL || "",
+      });
+
+      setUser(currentUser);
+
+      const res = await axios.get(`${SERVER_URL}/users/${currentUser.email}`, {
         withCredentials: true,
       });
+      setDbUser(res.data);
     } catch (error) {
-      console.error("Failed to fetch JWT:", error);
+      console.error("Create User Error:", error);
+      throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
-  const clearJwtToken = async () => {
+  const signInEmail = async (email, password) => {
+    setLoading(true);
     try {
-      await axios.post(
-        `${SERVER_URL}/auth/logout`,
-        {},
-        { withCredentials: true }
-      );
+      const cred = await signInWithEmailAndPassword(auth, email, password);
+      const currentUser = cred.user;
+
+      await createJWT(currentUser);
+
+      const res = await axios.get(`${SERVER_URL}/users/${currentUser.email}`, {
+        withCredentials: true,
+      });
+      setDbUser(res.data);
+      setUser(currentUser);
     } catch (error) {
-      console.error("Failed to clear JWT:", error);
+      console.error("Email SignIn Error:", error);
+      throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
-  const saveUserToDb = async (currentUser) => {
-    const userToSave = {
-      email: currentUser.email,
-      uid: currentUser.uid,
-      displayName: currentUser.displayName,
-      photoURL: currentUser.photoURL,
-    };
-
+  const signInGoogle = async () => {
+    setLoading(true);
     try {
-      const res = await axios.post(`${SERVER_URL}/users`, userToSave);
+      const provider = new GoogleAuthProvider();
+      const cred = await signInWithPopup(auth, provider);
+      const currentUser = cred.user;
 
-      const userData = res.data.user || res.data;
-      setDbUser(userData);
-      return userData;
+      await createJWT(currentUser);
+
+      const res = await axios.get(`${SERVER_URL}/users/${currentUser.email}`, {
+        withCredentials: true,
+      });
+      setDbUser(res.data);
+      setUser(currentUser);
     } catch (error) {
-      console.error("Failed to save user data to MongoDB:", error);
+      console.error("Google SignIn Error:", error);
+      throw error;
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const createUser = (email, password) => {
-    setLoading(true);
-    return createUserWithEmailAndPassword(auth, email, password);
-  };
-
-  const signIn = (email, password) => {
-    setLoading(true);
-    return signInWithEmailAndPassword(auth, email, password);
-  };
-
-  const signInWithGoogle = () => {
-    setLoading(true);
-    const provider = new GoogleAuthProvider();
-
-    return signInWithPopup(auth, provider);
   };
 
   const logOut = async () => {
+    setLoading(true);
     try {
-      await clearJwtToken();
+      await clearJWT();
       await signOut(auth);
-    } catch (error) {
-      console.error("Logout error:", error);
       setUser(null);
       setDbUser(null);
+    } catch (error) {
+      console.error("Logout Error:", error);
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const updateUserProfile = (name, photoURL) => {
-    return updateProfile(auth.currentUser, {
-      displayName: name,
-      photoURL: photoURL,
-    });
   };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
-
       if (currentUser) {
         try {
-          await axios.post(
-            `${SERVER_URL}/auth/jwt`,
-            { email: currentUser.email },
-            { withCredentials: true }
-          );
+          await createJWT(currentUser);
           const res = await axios.get(
             `${SERVER_URL}/users/${currentUser.email}`,
             { withCredentials: true }
           );
-
           setDbUser(res.data);
-        } catch (err) {
-          console.error("Auth sync error:", err);
+        } catch {
           setDbUser(null);
         } finally {
           setLoading(false);
@@ -129,23 +151,24 @@ const AuthProvider = ({ children }) => {
         setLoading(false);
       }
     });
-
     return () => unsubscribe();
   }, []);
-  const authInfo = {
-    user,
-    dbUser,
-    loading,
-    createUser,
-    signIn,
-    signInWithGoogle,
-    logOut,
-    updateUserProfile,
-    saveUserToDb,
-  };
 
   return (
-    <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>
+    <AuthContext.Provider
+      value={{
+        user,
+        dbUser,
+        loading,
+        createUser,
+        signInEmail,
+        signInGoogle,
+        logOut,
+        updateProfile,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
   );
 };
 
