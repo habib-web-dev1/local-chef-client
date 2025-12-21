@@ -226,7 +226,10 @@ const DashboardLayout = () => {
                 </p>
               </div>
               <img
-                src={dbUser?.photoURL || "https://i.ibb.co/0n6YtBC/user.png"}
+                src={
+                  dbUser?.photoURL ||
+                  "https://ui-avatars.com/api/?name=User&background=orange&color=fff"
+                }
                 className="h-10 w-10 rounded-full border-2 border-orange-500 object-cover shadow-lg"
                 alt="user"
               />
