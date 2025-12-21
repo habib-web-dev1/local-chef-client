@@ -6,7 +6,7 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
-  updateProfile,
+  updateProfile as firebaseUpdateProfile,
 } from "firebase/auth";
 import auth from "../Firebase/firebase.config";
 import axios from "axios";
@@ -17,119 +17,125 @@ export const useAuth = () => useContext(AuthContext);
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [dbUser, setDbUser] = useState(null);
+  const [user, setUser] = useState(null); // Firebase user
+  const [dbUser, setDbUser] = useState(null); // MongoDB user
   const [loading, setLoading] = useState(true);
 
+  // ----- JWT Functions -----
   const createJWT = async (currentUser) => {
-    await axios.post(
-      `${SERVER_URL}/auth/jwt`,
-      {
-        email: currentUser.email,
-        uid: currentUser.uid,
-      },
-      { withCredentials: true }
-    );
+    try {
+      await axios.post(
+        `${SERVER_URL}/auth/jwt`,
+        { email: currentUser.email, uid: currentUser.uid },
+        { withCredentials: true }
+      );
+    } catch (error) {
+      console.error("Failed to create JWT:", error);
+    }
   };
 
   const clearJWT = async () => {
-    await axios.post(
-      `${SERVER_URL}/auth/logout`,
-      {},
-      { withCredentials: true }
-    );
+    try {
+      await axios.post(
+        `${SERVER_URL}/auth/logout`,
+        {},
+        { withCredentials: true }
+      );
+    } catch (error) {
+      console.error("Failed to clear JWT:", error);
+    }
   };
 
-  const createUser = async (email, password, displayName) => {
-    setLoading(true);
+  // ----- User CRUD -----
+  const saveUserToDb = async (userInfo) => {
     try {
-      const cred = await createUserWithEmailAndPassword(auth, email, password);
-      const currentUser = cred.user;
+      const res = await axios.post(`${SERVER_URL}/users`, userInfo);
+      const userData = res.data.user || res.data;
+      setDbUser(userData);
+      return userData;
+    } catch (error) {
+      console.error("Failed to save user to DB:", error);
+    }
+  };
 
-      if (displayName) {
-        await updateProfile(currentUser, { displayName });
-      }
+  const updateUserProfileInDb = async (updates) => {
+    if (!user) return;
 
-      await createJWT(currentUser);
-
-      await axios.post(`${SERVER_URL}/users`, {
-        email: currentUser.email,
-        uid: currentUser.uid,
-        displayName: currentUser.displayName,
-        photoURL: currentUser.photoURL || "",
+    try {
+      // Update Firebase profile
+      await firebaseUpdateProfile(auth.currentUser, {
+        displayName: updates.displayName,
+        photoURL: updates.photoURL,
       });
 
-      setUser(currentUser);
-
-      const res = await axios.get(`${SERVER_URL}/users/${currentUser.email}`, {
+      // Update MongoDB profile
+      const res = await axios.patch(`${SERVER_URL}/users/profile`, updates, {
         withCredentials: true,
       });
       setDbUser(res.data);
     } catch (error) {
-      console.error("Create User Error:", error);
-      throw error;
-    } finally {
-      setLoading(false);
+      console.error("Failed to update profile:", error);
     }
+  };
+
+  // ----- Auth Functions -----
+  const createUser = async (email, password) => {
+    setLoading(true);
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    setUser(cred.user);
+    await createJWT(cred.user);
+    setLoading(false);
+    return cred.user;
   };
 
   const signInEmail = async (email, password) => {
     setLoading(true);
-    try {
-      const cred = await signInWithEmailAndPassword(auth, email, password);
-      const currentUser = cred.user;
-
-      await createJWT(currentUser);
-
-      const res = await axios.get(`${SERVER_URL}/users/${currentUser.email}`, {
-        withCredentials: true,
-      });
-      setDbUser(res.data);
-      setUser(currentUser);
-    } catch (error) {
-      console.error("Email SignIn Error:", error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
+    const cred = await signInWithEmailAndPassword(auth, email, password);
+    setUser(cred.user);
+    await createJWT(cred.user);
+    // Fetch user from DB
+    const res = await axios.get(`${SERVER_URL}/users/${cred.user.email}`, {
+      withCredentials: true,
+    });
+    setDbUser(res.data);
+    setLoading(false);
   };
 
   const signInGoogle = async () => {
     setLoading(true);
-    try {
-      const provider = new GoogleAuthProvider();
-      const cred = await signInWithPopup(auth, provider);
-      const currentUser = cred.user;
-
-      await createJWT(currentUser);
-
-      const res = await axios.get(`${SERVER_URL}/users/${currentUser.email}`, {
-        withCredentials: true,
+    const provider = new GoogleAuthProvider();
+    const cred = await signInWithPopup(auth, provider);
+    setUser(cred.user);
+    await createJWT(cred.user);
+    // Fetch or save user to DB
+    const res = await axios.get(`${SERVER_URL}/users/${cred.user.email}`, {
+      withCredentials: true,
+    });
+    if (!res.data) {
+      await saveUserToDb({
+        email: cred.user.email,
+        uid: cred.user.uid,
+        displayName: cred.user.displayName,
+        photoURL: cred.user.photoURL,
+        role: "user",
+        createdAt: new Date().toISOString(),
       });
+    } else {
       setDbUser(res.data);
-      setUser(currentUser);
-    } catch (error) {
-      console.error("Google SignIn Error:", error);
-      throw error;
-    } finally {
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   const logOut = async () => {
     setLoading(true);
-    try {
-      await clearJWT();
-      await signOut(auth);
-      setUser(null);
-      setDbUser(null);
-    } catch (error) {
-      console.error("Logout Error:", error);
-    } finally {
-      setLoading(false);
-    }
+    await clearJWT();
+    await signOut(auth);
+    setUser(null);
+    setDbUser(null);
+    setLoading(false);
   };
 
+  // ----- Auth State Listener -----
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
@@ -138,10 +144,12 @@ const AuthProvider = ({ children }) => {
           await createJWT(currentUser);
           const res = await axios.get(
             `${SERVER_URL}/users/${currentUser.email}`,
-            { withCredentials: true }
+            {
+              withCredentials: true,
+            }
           );
           setDbUser(res.data);
-        } catch {
+        } catch (error) {
           setDbUser(null);
         } finally {
           setLoading(false);
@@ -151,6 +159,7 @@ const AuthProvider = ({ children }) => {
         setLoading(false);
       }
     });
+
     return () => unsubscribe();
   }, []);
 
@@ -164,7 +173,8 @@ const AuthProvider = ({ children }) => {
         signInEmail,
         signInGoogle,
         logOut,
-        updateProfile,
+        updateUserProfileInDb,
+        saveUserToDb,
       }}
     >
       {children}
