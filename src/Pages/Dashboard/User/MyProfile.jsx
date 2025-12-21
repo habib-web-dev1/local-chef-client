@@ -23,21 +23,16 @@ import Swal from "sweetalert2";
 
 const MyProfile = () => {
   useTitle("My Profile");
-  const { user, dbUser, loading, updateUserProfile } = useAuth();
+  const { user, dbUser, loading, updateUserProfileInDb } = useAuth();
   const axiosSecure = useAxiosSecure();
   const [isEditing, setIsEditing] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm({
+  const { register, handleSubmit, reset } = useForm({
     defaultValues: {
-      name: user?.displayName || "",
-      photoURL: user?.photoURL || "",
+      name: dbUser?.displayName || user?.displayName || "",
+      photoURL: dbUser?.photoURL || user?.photoURL || "",
       address: dbUser?.address || "",
-      bio: dbUser?.chefDetails?.bio || "",
+      bio: dbUser?.bio || (dbUser?.chefDetails ? dbUser.chefDetails.bio : ""),
     },
   });
 
@@ -62,34 +57,25 @@ const MyProfile = () => {
 
   const onSubmit = async (data) => {
     try {
-      // 1. Update Firebase Auth Profile first
-      await updateUserProfile(data.name, data.photoURL);
-
-      // 2. Update MongoDB Profile
-      const response = await axiosSecure.patch("/users/profile", {
+      await updateUserProfileInDb({
         displayName: data.name,
         photoURL: data.photoURL,
         address: data.address,
-        bio: data.bio || "",
+        bio: data.bio,
       });
 
-      if (response.data.user) {
-        Swal.fire({
-          title: "Profile Updated!",
-          text: "Your changes have been saved successfully.",
-          icon: "success",
-          timer: 1500,
-          showConfirmButton: false,
-        });
-        setIsEditing(false);
-      }
+      Swal.fire({
+        title: "Success!",
+        text: "Profile updated successfully",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+      setIsEditing(false);
     } catch (error) {
       console.error("Update failed:", error);
-      Swal.fire(
-        "Error",
-        error.response?.data?.message || "Failed to update profile.",
-        "error"
-      );
+
+      Swal.fire("Error", "Check your connection or login again", "error");
     }
   };
 

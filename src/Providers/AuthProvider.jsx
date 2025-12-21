@@ -59,22 +59,18 @@ const AuthProvider = ({ children }) => {
   };
 
   const updateUserProfileInDb = async (updates) => {
-    if (!user) return;
-
     try {
-      // Update Firebase profile
-      await firebaseUpdateProfile(auth.currentUser, {
-        displayName: updates.displayName,
-        photoURL: updates.photoURL,
-      });
-
-      // Update MongoDB profile
       const res = await axios.patch(`${SERVER_URL}/users/profile`, updates, {
         withCredentials: true,
       });
-      setDbUser(res.data);
+
+      if (res.data.user) {
+        setDbUser(res.data.user);
+      }
+      return res.data;
     } catch (error) {
       console.error("Failed to update profile:", error);
+      throw error;
     }
   };
 
@@ -147,20 +143,23 @@ const AuthProvider = ({ children }) => {
       setUser(currentUser);
       if (currentUser) {
         try {
+          // 1. First, ensure the JWT is created and cookie is set
           await createJWT(currentUser);
+
+          // 2. ONLY THEN fetch the user data
           const res = await axios.get(
             `${SERVER_URL}/users/${currentUser.email}`,
-            {
-              withCredentials: true,
-            }
+            { withCredentials: true }
           );
           setDbUser(res.data);
         } catch (error) {
+          console.error("Auth state user fetch error:", error);
           setDbUser(null);
         } finally {
           setLoading(false);
         }
       } else {
+        // If no user, ensure JWT is cleared on backend too
         setDbUser(null);
         setLoading(false);
       }
