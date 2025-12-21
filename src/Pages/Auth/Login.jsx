@@ -13,8 +13,9 @@ import {
 } from "react-icons/fa";
 import useTitle from "../../Hooks/useTitle";
 import Swal from "sweetalert2";
-import useAuth from "../../Hooks/useAuth";
+
 import { motion } from "framer-motion";
+import { useAuth } from "../../Providers/AuthProvider";
 
 const Login = () => {
   useTitle("Login");
@@ -24,14 +25,14 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { signIn, signInWithGoogle, loading } = useAuth();
+  const { signInEmail, signInGoogle, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   const from = location.state?.from?.pathname || "/";
 
   const onSubmit = (data) => {
-    signIn(data.email, data.password)
+    signInEmail(data.email, data.password)
       .then(() => {
         Swal.fire({
           toast: true,
@@ -157,7 +158,7 @@ const Login = () => {
           </div>
 
           <button
-            onClick={signInWithGoogle}
+            onClick={signInGoogle}
             className="w-full flex items-center justify-center gap-3 py-4 border border-gray-100 dark:border-gray-800 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all font-bold text-gray-700 dark:text-gray-200"
           >
             <FaGoogle className="text-red-500" /> Google Account

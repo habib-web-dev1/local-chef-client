@@ -35,7 +35,7 @@ const Register = () => {
     formState: { errors },
     watch,
   } = useForm();
-  const { createUser, updateUserProfile, saveUserToDb, loading } = useAuth();
+  const { createUser, updateUserProfile, loading } = useAuth();
   const navigate = useNavigate();
 
   const handleImageChange = (e) => {
@@ -54,19 +54,10 @@ const Register = () => {
 
       if (imgRes.data.success) {
         const uploadedImageUrl = imgRes.data.data.display_url;
-        const result = await createUser(data.email, data.password);
-        await updateUserProfile(data.name, uploadedImageUrl);
 
-        const userInfo = {
-          uid: result.user.uid,
-          email: data.email,
-          displayName: data.name,
-          photoURL: uploadedImageUrl,
-          address: data.address,
-          role: "user",
-          createdAt: new Date().toISOString(),
-        };
-        await saveUserToDb(userInfo);
+        await createUser(data.email, data.password, data.name);
+
+        await updateUserProfile(data.name, uploadedImageUrl);
 
         Swal.fire({
           icon: "success",
