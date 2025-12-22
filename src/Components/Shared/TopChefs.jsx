@@ -7,6 +7,7 @@ import {
   FaMedal,
   FaSpinner,
 } from "react-icons/fa";
+
 import { Link } from "react-router";
 import { useAuth } from "../../Providers/AuthProvider";
 import axios from "axios";
@@ -15,14 +16,18 @@ const TopChefs = () => {
   const { axiosSecure } = useAuth();
   const [chefs, setChefs] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  // const SERVER_URL = import.meta.env.VITE_SERVER_URL;
   useEffect(() => {
     const fetchTopChefs = async () => {
       setLoading(true);
       try {
+        // Direct call to the new optimized public endpoint
         const res = await axios.get(
           `${import.meta.env.VITE_SERVER_URL}/users/top-chefs`
         );
+
+        // The backend already filtered for role:"chef", status:"active",
+        // sorted by rating, and limited to 4.
         setChefs(res.data);
       } catch (error) {
         console.error("Failed to fetch top chefs:", error);
@@ -30,9 +35,11 @@ const TopChefs = () => {
         setLoading(false);
       }
     };
+
     fetchTopChefs();
   }, []);
 
+  // Framer Motion Variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -50,6 +57,7 @@ const TopChefs = () => {
   };
 
   const ChefCard = ({ chef, index }) => {
+    // Medal colors for top 3
     let medalColor = "text-gray-400";
     if (index === 0) medalColor = "text-yellow-500";
     else if (index === 1) medalColor = "text-gray-300";
@@ -61,6 +69,7 @@ const TopChefs = () => {
         variants={cardVariants}
         whileHover={{ scale: 1.03, translateY: -5 }}
       >
+        {/* Ranking Badge */}
         {index < 3 && (
           <div className="absolute top-0 right-0 p-3">
             <FaMedal className={`w-8 h-8 ${medalColor} drop-shadow-md`} />
@@ -70,6 +79,7 @@ const TopChefs = () => {
           </div>
         )}
 
+        {/* Profile Image */}
         <div className="w-28 h-28 mb-4 rounded-full overflow-hidden border-4 border-orange-500 dark:border-orange-400">
           <img
             src={chef.photoURL || "https://i.ibb.co/30kL6P8/default-avatar.png"}
@@ -78,11 +88,12 @@ const TopChefs = () => {
           />
         </div>
 
+        {/* --- NAME SECTION FIXED TO ONE LINE --- */}
         <div className="flex items-center justify-center mb-1 w-full overflow-hidden">
           <h3 className="text-lg font-bold text-gray-900 dark:text-white whitespace-nowrap truncate max-w-[70%]">
             {chef.displayName}
           </h3>
-
+          {/* Rating Display */}
           <span className="flex-shrink-0 flex items-center text-xs font-bold text-yellow-500 bg-yellow-500/10 px-2 py-1 rounded-full ml-2">
             <FaStar className="w-3 h-3 mr-1" />
             {chef.rating ? chef.rating.toFixed(1) : "5.0"}
@@ -93,6 +104,7 @@ const TopChefs = () => {
           {chef.specialty || "Certified Home Chef"}
         </p>
 
+        {/* Info Section */}
         <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400 w-full border-t border-gray-100 dark:border-gray-700 py-4 mt-auto">
           <div className="flex items-center justify-center">
             <FaUtensils className="text-gray-500 mr-2 w-4 h-4" />
@@ -110,6 +122,7 @@ const TopChefs = () => {
           </div>
         </div>
 
+        {/* Link */}
         <Link className="mt-6 w-full">
           <motion.button
             className="w-full py-2 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700 transition-colors duration-300 shadow-md"

@@ -9,8 +9,11 @@
   }
 
   body {
+    /* bg-base-100 is DaisyUI's default background */
     @apply bg-base-100 text-base-content transition-colors duration-500 antialiased;
   }
+
+  /* Smooth transition for the professional cards we built */
   .dark body {
     @apply bg-gray-950 text-white;
   }

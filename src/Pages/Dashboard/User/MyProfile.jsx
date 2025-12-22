@@ -62,10 +62,10 @@ const MyProfile = () => {
 
   const onSubmit = async (data) => {
     try {
-      //  Update Firebase Auth Profile first
+      // 1. Update Firebase Auth Profile first
       await updateUserProfile(data.name, data.photoURL);
 
-      //  Update MongoDB Profile
+      // 2. Update MongoDB Profile
       const response = await axiosSecure.patch("/users/profile", {
         displayName: data.name,
         photoURL: data.photoURL,
@@ -82,6 +82,10 @@ const MyProfile = () => {
           showConfirmButton: false,
         });
         setIsEditing(false);
+
+        // Optional: If your AuthProvider doesn't auto-refresh dbUser,
+        // you might need a refresh function here or reload the page
+        // window.location.reload();
       }
     } catch (error) {
       console.error("Update failed:", error);
@@ -131,6 +135,7 @@ const MyProfile = () => {
     }
   };
 
+  // Reusable Tailwind Class for Inputs
   const inputClass = `w-full p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-transparent outline-none transition-all focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 disabled:bg-gray-50 dark:disabled:bg-gray-800 disabled:text-gray-400 dark:text-white`;
 
   return (
@@ -204,7 +209,7 @@ const MyProfile = () => {
                   <FaTimesCircle />
                 ) : (
                   <FaCheckCircle />
-                )}
+                )}{" "}
                 {dbUser?.status || "active"}
               </span>
             </div>

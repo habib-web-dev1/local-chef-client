@@ -49,6 +49,7 @@ const CreateMeal = () => {
       </div>
     );
 
+  // Fraud protection check
   if (dbUser?.status === "fraud") {
     return (
       <motion.div
@@ -79,8 +80,8 @@ const CreateMeal = () => {
         const mealData = {
           foodName: data.foodName,
           foodImage: imgRes.data.data.display_url,
-          category: data.category,
-          description: data.description,
+          category: data.category, // Ensure this is captured
+          description: data.description, // Ensure this is captured
           portion: data.portion,
           price: parseFloat(data.price),
           estimatedDeliveryTime: `${data.estimatedDeliveryTime} mins`,
@@ -139,6 +140,7 @@ const CreateMeal = () => {
       </header>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {/* Chef Identity Badge */}
         <div className="flex flex-wrap gap-4 p-4 bg-slate-50 dark:bg-gray-900/50 rounded-2xl border border-dashed border-slate-200">
           <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-gray-400">
             <FaUser className="text-orange-500" />{" "}
@@ -150,6 +152,7 @@ const CreateMeal = () => {
           </div>
         </div>
 
+        {/* Name Field */}
         <div>
           <label className="block text-sm font-black text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
             Meal Title
@@ -161,6 +164,7 @@ const CreateMeal = () => {
           />
         </div>
 
+        {/* Pricing & Category Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <label className="block text-sm font-black text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
@@ -212,6 +216,7 @@ const CreateMeal = () => {
           </div>
         </div>
 
+        {/* Description & Prep Time */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="md:col-span-3">
             <label className="block text-sm font-black text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
@@ -242,6 +247,7 @@ const CreateMeal = () => {
           </div>
         </div>
 
+        {/* Ingredients */}
         <div>
           <label className="block text-sm font-black text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
             Main Ingredients
@@ -253,6 +259,7 @@ const CreateMeal = () => {
           />
         </div>
 
+        {/* Image Upload Area */}
         <div className="border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-3xl p-6 text-center hover:border-orange-500 transition-colors relative overflow-hidden bg-gray-50/50">
           <input
             type="file"

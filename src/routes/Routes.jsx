@@ -1,4 +1,5 @@
 import { createBrowserRouter } from "react-router";
+import MainLayout from "../layouts/MainLayout";
 import ErrorPage from "../Pages/Shared/ErrorPage";
 import Home from "../Pages/Home";
 import Login from "../Pages/Auth/Login";
@@ -23,7 +24,6 @@ import OrderPage from "../Pages/OrderPage";
 import DashboardHome from "../Pages/Dashboard/DashboardHome";
 import CreateMeal from "../Pages/Dashboard/Chef/CreateMeal";
 import PaymentSuccess from "../Pages/Shared/PaymentSuccess";
-import MainLayout from "../Layouts/MainLayout";
 
 const router = createBrowserRouter([
   {
@@ -54,6 +54,7 @@ const router = createBrowserRouter([
     ],
   },
 
+  // --- DASHBOARD LAYOUT & PROTECTED ROUTES ---
   {
     path: "/dashboard",
     element: (
@@ -62,14 +63,17 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
     children: [
+      // 🎯 HOME: No extra wrapper needed (Inherits from Parent)
       { index: true, element: <DashboardHome /> },
 
+      // --- USER ROUTES (No extra PrivateRoute needed) ---
       { path: "profile", element: <MyProfile /> },
       { path: "my-orders", element: <MyOrders /> },
       { path: "payment-success", element: <PaymentSuccess /> },
       { path: "favorite-meals", element: <FavoriteMeals /> },
       { path: "my-reviews", element: <MyReviews /> },
 
+      // --- CHEF ROUTES (Only wrap in ChefRoute) ---
       {
         path: "create-meals",
         element: (
@@ -103,6 +107,7 @@ const router = createBrowserRouter([
         ),
       },
 
+      // --- ADMIN ROUTES (Only wrap in AdminRoute) ---
       {
         path: "platform-stats",
         element: (

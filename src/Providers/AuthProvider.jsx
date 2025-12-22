@@ -10,14 +10,17 @@ import {
 } from "firebase/auth";
 import auth from "../Firebase/firebase.config";
 import axios from "axios";
+
 export const AuthContext = createContext(null);
+
+// Custom hook to consume the AuthContext easily
 export const useAuth = () => useContext(AuthContext);
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [dbUser, setDbUser] = useState(null);
+  const [dbUser, setDbUser] = useState(null); // MongoDB user data (role, status, chefId)
   const [loading, setLoading] = useState(true);
 
   // --- JWT Token Generator
@@ -28,6 +31,7 @@ const AuthProvider = ({ children }) => {
         uid: currentUser.uid,
       };
 
+      // Sends the info to the Express server to receive an HTTP-only cookie
       await axios.post(`${SERVER_URL}/jwt`, userInfo, {
         withCredentials: true,
       });
@@ -36,6 +40,7 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  // --- JWT Token Remover (Clears HTTP-only cookie on server) ---
   const clearJwtToken = async () => {
     try {
       await axios.post(
@@ -48,6 +53,8 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  // --- Helper function to save/update user on MongoDB ---
+  // Called after any successful Firebase sign-in or registration
   const saveUserToDb = async (currentUser) => {
     const userToSave = {
       email: currentUser.email,
@@ -75,7 +82,7 @@ const AuthProvider = ({ children }) => {
 
   const signIn = (email, password) => {
     setLoading(true);
-
+    // The component using this must handle .then()
     return signInWithEmailAndPassword(auth, email, password);
   };
 
@@ -88,11 +95,11 @@ const AuthProvider = ({ children }) => {
 
   const logOut = async () => {
     try {
-      await clearJwtToken();
-      await signOut(auth);
+      await clearJwtToken(); // 1. Clear JWT cookie on server
+      await signOut(auth); // 2. Sign out from Firebase (Triggers observer)
     } catch (error) {
       console.error("Logout error:", error);
-
+      // Fallback cleanup
       setUser(null);
       setDbUser(null);
     }
@@ -107,16 +114,19 @@ const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      // 1. Set the firebase user first
       setUser(currentUser);
 
       if (currentUser) {
         try {
+          // 2. Get JWT (Using the correct /auth prefix)
           await axios.post(
             `${SERVER_URL}/auth/jwt`,
             { email: currentUser.email },
             { withCredentials: true }
           );
 
+          // 3. Get User Profile from DB
           const res = await axios.get(
             `${SERVER_URL}/users/${currentUser.email}`,
             { withCredentials: true }
@@ -127,9 +137,11 @@ const AuthProvider = ({ children }) => {
           console.error("Auth sync error:", err);
           setDbUser(null);
         } finally {
+          // 🎯 STOP LOADING ONLY AFTER DB DATA IS FETCHED
           setLoading(false);
         }
       } else {
+        // No user logged in
         setDbUser(null);
         setLoading(false);
       }
@@ -146,7 +158,7 @@ const AuthProvider = ({ children }) => {
     signInWithGoogle,
     logOut,
     updateUserProfile,
-    saveUserToDb,
+    saveUserToDb, // Exposed for components that call createUser/signIn directly
   };
 
   return (

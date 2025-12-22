@@ -8,9 +8,10 @@ const CustomerReviews = () => {
   const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
   useEffect(() => {
+    // 🎯 Fetching real reviews from your backend
     axios
       .get(`${SERVER_URL}/reviews`)
-      .then((res) => setReviews(res.data.slice(0, 6)))
+      .then((res) => setReviews(res.data.slice(0, 6))) // Show only first 6
       .catch((err) => console.error("Error fetching reviews:", err));
   }, []);
 
@@ -34,6 +35,7 @@ const CustomerReviews = () => {
             </p>
           </div>
 
+          {/* User Stack Info */}
           <div className="hidden lg:block">
             <div className="flex -space-x-4">
               {[1, 2, 3, 4].map((i) => (
@@ -54,6 +56,7 @@ const CustomerReviews = () => {
           </div>
         </div>
 
+        {/* Reviews Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {reviews.length > 0 ? (
             reviews.map((review) => (

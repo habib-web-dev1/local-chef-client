@@ -98,13 +98,15 @@ const MyReviews = () => {
         try {
           const res = await axiosSecure.patch(`/reviews/${review._id}`, {
             comment: result.value,
-            rating: review.rating,
+            rating: review.rating, // 🎯 Keep existing rating or pass a new one
           });
 
           if (res.data.review) {
             setReviews(
               reviews.map((r) =>
-                r._id === review._id ? { ...r, comment: result.value } : r
+                r._id === review._id
+                  ? { ...r, comment: result.value } // 🎯 '...r' preserves the rating!
+                  : r
               )
             );
             Swal.fire("Success", "Review updated successfully", "success");
@@ -167,6 +169,7 @@ const MyReviews = () => {
                 exit={{ opacity: 0, scale: 0.9 }}
                 className="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow relative overflow-hidden group"
               >
+                {/* Visual Accent */}
                 <div className="absolute top-0 left-0 w-1.5 h-full bg-orange-500"></div>
 
                 <div className="flex justify-between items-start mb-4">

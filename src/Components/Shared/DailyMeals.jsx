@@ -5,20 +5,24 @@ import MealCard from "./MealCard";
 import LoadingPage from "./LoadingPage";
 
 const DailyMeals = () => {
+  // 1. ADD 'error' HERE in the destructuring
   const { data, isLoading, error } = useQuery({
     queryKey: ["dailyMeals"],
     queryFn: async () => {
+      // Pass limit=6 as per your home page requirement
       const res = await axios.get(
         `${
           import.meta.env.VITE_SERVER_URL
         }/meals?limit=6&sort=createdAt&order=desc`
       );
+      // Since your controller returns { meals, totalPages... }, we return the array
       return res.data.meals;
     },
   });
 
   if (isLoading) return <LoadingPage />;
 
+  // 2. Now 'error' is defined and can be used safely
   if (error) {
     return (
       <div className="text-center py-10 text-red-500 font-bold">
@@ -26,6 +30,8 @@ const DailyMeals = () => {
       </div>
     );
   }
+
+  // Ensure meals is an array before mapping
   const meals = Array.isArray(data) ? data : [];
 
   return (

@@ -24,15 +24,17 @@ const ManageRequests = () => {
   const axiosSecure = useAxiosSecure();
   const queryClient = useQueryClient();
 
+  // 1. Fetch Requests using TanStack Query
   const { data: requests = [], isLoading } = useQuery({
     queryKey: ["admin-requests"],
-    enabled: !loading && !!user,
+    enabled: !loading && !!user, // ONLY fetch when user is confirmed logged in
     queryFn: async () => {
       const res = await axiosSecure.get("/admin/requests");
       return res.data;
     },
   });
 
+  // 2. Mutation for Processing (Approve/Reject)
   const processMutation = useMutation({
     mutationFn: async ({ requestId, status, chefId }) => {
       const payload = { status };
@@ -45,7 +47,7 @@ const ManageRequests = () => {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries(["admin-requests"]);
-      queryClient.invalidateQueries(["users"]);
+      queryClient.invalidateQueries(["users"]); // Invalidate users so roles update there too
       Swal.fire({
         title: "Processed!",
         text: "The request has been successfully updated.",
@@ -63,6 +65,7 @@ const ManageRequests = () => {
     },
   });
 
+  // --- UI Helpers ---
   const generateUniqueChefId = () =>
     `chef-${Math.floor(1000 + Math.random() * 9000)}`;
 

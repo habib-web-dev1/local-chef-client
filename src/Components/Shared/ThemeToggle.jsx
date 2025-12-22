@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { FaSun, FaMoon } from "react-icons/fa";
 
 const ThemeToggle = () => {
+  // Initialize state from localStorage or default to light
   const [isDark, setIsDark] = useState(
     localStorage.getItem("theme") === "dark"
   );
 
   useEffect(() => {
     const theme = isDark ? "dark" : "light";
+    // This is the key for DaisyUI v4
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
   }, [isDark]);

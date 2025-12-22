@@ -1,6 +1,9 @@
+// src/Firebase/firebase.config.js
+
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
+// Environment variables are loaded automatically in React
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_API_KEY,
   authDomain: import.meta.env.VITE_AUTH_DOMAIN,
@@ -10,6 +13,7 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_APP_ID,
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 

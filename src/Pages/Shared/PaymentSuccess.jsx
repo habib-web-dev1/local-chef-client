@@ -17,10 +17,13 @@ const PaymentSuccess = () => {
   const location = useLocation();
   const axiosSecure = useAxiosSecure();
   const [isVerifying, setIsVerifying] = useState(true);
+
+  // 1. Extract params from URL redirect
   const query = new URLSearchParams(location.search);
   const sessionId = query.get("session_id");
-  const orderId = query.get("orderId");
+  const orderId = query.get("orderId"); // Make sure this matches your backend success_url
 
+  // 2. Sync with Backend on Load
   useEffect(() => {
     if (sessionId && orderId) {
       axiosSecure
@@ -30,6 +33,7 @@ const PaymentSuccess = () => {
         })
         .then((res) => {
           console.log("Success!");
+          // Optional: Add a small toast if you want
         })
         .catch((err) => {
           console.error("Error updating order", err);
@@ -40,9 +44,11 @@ const PaymentSuccess = () => {
           );
         })
         .finally(() => {
+          // 🎯 CRITICAL: This hides the spinner and shows the success UI
           setIsVerifying(false);
         });
     } else {
+      // If there's no session, stop loading so user can see the "Home" buttons
       setIsVerifying(false);
     }
   }, [sessionId, orderId, axiosSecure]);
@@ -57,6 +63,7 @@ const PaymentSuccess = () => {
     visible: { y: 0, opacity: 1 },
   };
 
+  // Show a loading state while we update the database
   if (isVerifying) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
@@ -99,6 +106,7 @@ const PaymentSuccess = () => {
           Your order has been confirmed.
         </motion.p>
 
+        {/* Display Order Details */}
         <motion.div
           className="bg-green-50 dark:bg-green-900/30 p-4 rounded-lg text-left mb-8 space-y-2 text-gray-800 dark:text-gray-200"
           variants={itemVariants}

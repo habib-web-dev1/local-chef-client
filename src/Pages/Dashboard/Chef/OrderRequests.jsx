@@ -23,6 +23,7 @@ const OrderRequests = () => {
   const axiosSecure = useAxiosSecure();
   const { user } = useAuth();
 
+  // --- 1. Fetch Real Data from Backend ---
   const fetchChefOrders = async () => {
     try {
       const res = await axiosSecure.get("/orders/chef-requests");
@@ -38,6 +39,7 @@ const OrderRequests = () => {
     if (user?.uid) fetchChefOrders();
   }, [axiosSecure, user]);
 
+  // --- 2. Update Order Status in Database ---
   const handleUpdateStatus = (orderId, newStatus) => {
     Swal.fire({
       title: `Confirm ${newStatus.toUpperCase()}?`,
@@ -54,6 +56,7 @@ const OrderRequests = () => {
           });
 
           if (res.data) {
+            // Update local state for LIVE status update
             setOrders((prev) =>
               prev.map((o) =>
                 o._id === orderId ? { ...o, status: newStatus } : o
@@ -93,6 +96,7 @@ const OrderRequests = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <AnimatePresence>
           {orders.map((order) => {
+            // Logic Helpers for Button Rules
             const isPending = order.status === "pending";
             const isAccepted = order.status === "accepted";
             const isDelivered = order.status === "delivered";
@@ -111,6 +115,7 @@ const OrderRequests = () => {
                   isCancelled ? "border-red-100 opacity-60" : "border-gray-100"
                 }`}
               >
+                {/* Food Header */}
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="font-black text-xl text-gray-800">
@@ -125,6 +130,7 @@ const OrderRequests = () => {
                   </span>
                 </div>
 
+                {/* Customer Details */}
                 <div className="space-y-3 mb-6 bg-gray-50 p-4 rounded-2xl border border-gray-100">
                   <p className="text-sm font-bold text-gray-700 flex items-center gap-2">
                     <FaUser className="text-orange-400 text-xs" />{" "}
@@ -151,6 +157,7 @@ const OrderRequests = () => {
                   </div>
                 </div>
 
+                {/* Status Indicator */}
                 <div className="mb-6 flex items-center justify-between px-1">
                   <p className="text-[10px] font-black text-gray-400 uppercase">
                     Order Status:
@@ -168,7 +175,9 @@ const OrderRequests = () => {
                   </span>
                 </div>
 
+                {/* Action Buttons: Strict Logic */}
                 <div className="grid grid-cols-3 gap-2">
+                  {/* CANCEL BUTTON */}
                   <button
                     disabled={!isPending}
                     onClick={() => handleUpdateStatus(order._id, "cancelled")}
@@ -178,6 +187,7 @@ const OrderRequests = () => {
                     <FaTimesCircle size={18} /> Cancel
                   </button>
 
+                  {/* ACCEPT BUTTON */}
                   <button
                     disabled={!isPending}
                     onClick={() => handleUpdateStatus(order._id, "accepted")}
@@ -187,7 +197,10 @@ const OrderRequests = () => {
                     <FaCheckCircle size={18} /> Accept
                   </button>
 
+                  {/* DELIVER BUTTON */}
                   <button
+                    // Enable if status is 'accepted' OR 'paid' OR 'processing'
+                    // Disable ONLY if it's already 'delivered', 'cancelled', or still 'pending'
                     disabled={
                       order.status === "pending" ||
                       order.status === "delivered" ||

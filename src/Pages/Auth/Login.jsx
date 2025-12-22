@@ -48,6 +48,7 @@ const Login = () => {
       });
   };
 
+  // Shared UI wrapper for inputs (Same as Register)
   const InputWrapper = ({ icon: Icon, children }) => (
     <div className="relative flex items-center group">
       <div className="absolute left-4 text-gray-400 group-focus-within:text-orange-500 transition-colors">
@@ -64,7 +65,7 @@ const Login = () => {
         animate={{ opacity: 1, scale: 1 }}
         className="w-full max-w-4xl bg-white dark:bg-gray-900 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:shadow-none overflow-hidden flex flex-col md:flex-row border border-gray-100 dark:border-gray-800"
       >
-        {/* Left Branding Panel  */}
+        {/* Left Branding Panel (Matches Register) */}
         <div className="md:w-[40%] bg-orange-600 p-12 text-white flex flex-col justify-between relative overflow-hidden">
           <div className="z-10">
             <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center mb-8">

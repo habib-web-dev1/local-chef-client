@@ -84,6 +84,7 @@ const Register = () => {
     }
   };
 
+  // Helper component for styled inputs
   const InputWrapper = ({ icon: Icon, children }) => (
     <div className="relative flex items-center group">
       <div className="absolute left-4 text-gray-400 group-focus-within:text-orange-500 transition-colors">

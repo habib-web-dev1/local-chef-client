@@ -1,3 +1,4 @@
+// src/Pages/Dashboard/Customer/MyOrders.jsx
 import React, { useEffect, useState } from "react";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 import {
@@ -26,18 +27,22 @@ const MyOrders = () => {
     }
   };
 
+  // 2. Place the logic here
   useEffect(() => {
-    fetchMyOrders();
+    fetchMyOrders(); // Run immediately when page loads
 
+    // Set up the interval to check for status updates every 30 seconds
     const interval = setInterval(() => {
       fetchMyOrders();
     }, 30000);
 
+    // Cleanup: Stop the timer if the user leaves the page
     return () => clearInterval(interval);
   }, [axiosSecure]);
 
   const handlePayment = async (order) => {
     try {
+      // 🎯 FIX: Wrap 'order' in an object to match your Controller's "const { order } = req.body"
       const res = await axiosSecure.post("/payment/create-checkout-session", {
         order: order,
       });
@@ -109,6 +114,7 @@ const MyOrders = () => {
                 </p>
               </div>
 
+              {/* Status Timeline */}
               <div className="hidden lg:flex items-center gap-2 px-6">
                 <div
                   className={`flex flex-col items-center ${
@@ -144,6 +150,7 @@ const MyOrders = () => {
                 </div>
               </div>
 
+              {/* 🎯 Payment Section Logic */}
               <div className="flex flex-col items-center gap-3">
                 <div
                   className={`px-4 py-2 rounded-full border text-[10px] font-black uppercase ${getStatusStyle(

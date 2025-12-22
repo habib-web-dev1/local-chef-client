@@ -15,12 +15,14 @@ import { useAuth } from "../../Providers/AuthProvider";
 const DashboardHome = () => {
   const { user, dbUser } = useAuth();
 
+  // Dynamic Greeting based on time
   const hour = new Date().getHours();
   const greeting =
     hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening";
 
   return (
     <div className="space-y-10 pb-10">
+      {/* --- WELCOME SECTION --- */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -52,15 +54,18 @@ const DashboardHome = () => {
             </div>
           </div>
 
+          {/* Large Abstract Graphic */}
           <div className="hidden lg:block relative">
             <div className="absolute inset-0 bg-orange-500 blur-[100px] opacity-20 rounded-full animate-pulse"></div>
             <FaUtensils className="text-[12rem] text-white/5 rotate-12 relative z-10" />
           </div>
         </div>
 
+        {/* Background Decorative Circles */}
         <div className="absolute -top-24 -left-24 w-64 h-64 bg-orange-600/10 rounded-full blur-3xl"></div>
       </motion.section>
 
+      {/* --- ACTIVITY FEED SECTION --- */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -106,6 +111,7 @@ const DashboardHome = () => {
           </div>
         </motion.div>
 
+        {/* --- SUMMARY SIDEBAR --- */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -128,6 +134,7 @@ const DashboardHome = () => {
   );
 };
 
+// Sub-component for Activity Items to keep code clean
 const ActivityItem = ({ icon, title, time, desc }) => (
   <div className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
     <div className="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-slate-50 dark:bg-gray-700 dark:border-gray-600 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">

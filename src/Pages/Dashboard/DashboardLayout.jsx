@@ -48,6 +48,7 @@ const DashboardLayout = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
+      {/* --- Mobile Sidebar Overlay --- */}
       <AnimatePresence>
         {isSidebarOpen && (
           <motion.div
@@ -60,6 +61,7 @@ const DashboardLayout = () => {
         )}
       </AnimatePresence>
 
+      {/* --- Sidebar --- */}
       <aside
         className={`fixed inset-y-0 left-0 z-50 w-72 bg-gray-900 text-white transform transition-transform duration-300 ease-in-out md:translate-x-0 ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -78,6 +80,7 @@ const DashboardLayout = () => {
         </div>
 
         <nav className="px-4 py-6 space-y-2 overflow-y-auto h-[calc(100vh-180px)] custom-scrollbar">
+          {/* COMMON ROUTE */}
           <p className="px-4 pb-2 text-[10px] uppercase text-gray-500 font-bold tracking-widest">
             Account
           </p>
@@ -89,6 +92,7 @@ const DashboardLayout = () => {
             <FaUser /> My Profile
           </NavLink>
 
+          {/* ADMIN ROUTES */}
           {role === "admin" && (
             <div className="pt-4 space-y-2">
               <p className="px-4 pb-2 text-[10px] uppercase text-gray-500 font-bold tracking-widest border-t border-white/5 pt-4">
@@ -118,6 +122,7 @@ const DashboardLayout = () => {
             </div>
           )}
 
+          {/* CHEF ROUTES */}
           {role === "chef" && (
             <div className="pt-4 space-y-2">
               <p className="px-4 pb-2 text-[10px] uppercase text-gray-500 font-bold tracking-widest border-t border-white/5 pt-4">
@@ -147,6 +152,7 @@ const DashboardLayout = () => {
             </div>
           )}
 
+          {/* USER ROUTES */}
           {role === "user" && (
             <div className="pt-4 space-y-2">
               <p className="px-4 pb-2 text-[10px] uppercase text-gray-500 font-bold tracking-widest border-t border-white/5 pt-4">
@@ -176,6 +182,7 @@ const DashboardLayout = () => {
             </div>
           )}
 
+          {/* SYSTEM NAVIGATION */}
           <div className="pt-4 mt-4 border-t border-white/5">
             <NavLink
               to="/"
@@ -186,6 +193,7 @@ const DashboardLayout = () => {
           </div>
         </nav>
 
+        {/* --- Sidebar Bottom Area --- */}
         <div className="absolute bottom-0 w-full p-4 bg-gray-900 border-t border-white/5">
           <button
             onClick={handleLogout}
@@ -197,7 +205,9 @@ const DashboardLayout = () => {
         </div>
       </aside>
 
+      {/* --- Main Content Area --- */}
       <div className="flex-1 md:ml-72 flex flex-col min-w-0">
+        {/* Dashboard Top Header */}
         <header className="h-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b dark:border-gray-800 flex items-center justify-between px-4 md:px-8 sticky top-0 z-30 transition-colors duration-300">
           <div className="flex items-center gap-4">
             <button
@@ -234,6 +244,7 @@ const DashboardLayout = () => {
           </div>
         </header>
 
+        {/* Page Content Rendered Here */}
         <main className="p-4 md:p-8 flex-1">
           <motion.div
             initial={{ opacity: 0, y: 10 }}

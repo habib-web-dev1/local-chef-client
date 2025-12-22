@@ -36,6 +36,7 @@ const Navbar = () => {
   return (
     <nav className="sticky top-0 z-[100] bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800">
       <div className="max-w-7xl mx-auto px-4 h-20 flex justify-between items-center">
+        {/* Logo */}
         <Link to="/" className="flex items-center gap-2 group">
           <div className="bg-orange-600 p-2 rounded-lg group-hover:rotate-12 transition-transform">
             <FaUtensils className="text-white text-xl" />
@@ -45,6 +46,7 @@ const Navbar = () => {
           </span>
         </Link>
 
+        {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-2">
           {navLinks.map((link) => (
             <NavLink key={link.path} to={link.path} className={linkClasses}>
@@ -53,6 +55,7 @@ const Navbar = () => {
           ))}
         </div>
 
+        {/* Action Area */}
         <div className="flex items-center gap-3">
           <ThemeToggle />
 
@@ -79,6 +82,7 @@ const Navbar = () => {
             </Link>
           )}
 
+          {/* Mobile Toggle */}
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden text-2xl dark:text-white"
@@ -88,6 +92,7 @@ const Navbar = () => {
         </div>
       </div>
 
+      {/* Mobile Menu Drawer */}
       <AnimatePresence>
         {isOpen && (
           <motion.div

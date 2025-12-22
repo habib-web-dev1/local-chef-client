@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { FaSearch, FaShoppingBag, FaTruck } from "react-icons/fa";
 
 const HowItWorks = () => {
+  // Framer Motion variants for the step cards
   const stepVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: {
@@ -12,6 +13,7 @@ const HowItWorks = () => {
     },
   };
 
+  // Data for the steps
   const steps = [
     {
       icon: FaSearch,

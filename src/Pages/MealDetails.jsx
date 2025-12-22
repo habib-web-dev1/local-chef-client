@@ -12,7 +12,7 @@ import {
   FaCommentDots,
   FaShoppingCart,
   FaSpinner,
-  FaLock,
+  FaLock, // Added for fraud state
 } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import useTitle from "../Hooks/useTitle";
@@ -22,7 +22,7 @@ import Swal from "sweetalert2";
 
 const MealDetails = () => {
   const { id } = useParams();
-  const { user, dbUser, loading: authLoading } = useAuth();
+  const { user, dbUser, loading: authLoading } = useAuth(); // 🎯 Destructured dbUser
   const navigate = useNavigate();
   const axiosSecure = useAxiosSecure();
   const SERVER_URL = import.meta.env.VITE_SERVER_URL;
@@ -86,6 +86,7 @@ const MealDetails = () => {
   const handleReviewSubmit = async (data) => {
     if (!user) return Swal.fire("Error", "You must be logged in!", "error");
 
+    // 🛡️ Guard for Fraud Status
     if (dbUser?.status === "fraud") {
       return Swal.fire(
         "Access Denied",
@@ -144,6 +145,7 @@ const MealDetails = () => {
     >
       <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden border dark:border-gray-700">
         <div className="grid grid-cols-1 lg:grid-cols-3">
+          {/* Top Hero Section... (Same as your code) */}
           <div className="lg:col-span-2 relative h-[500px]">
             <img
               src={meal.foodImage}
@@ -166,6 +168,7 @@ const MealDetails = () => {
             </div>
           </div>
 
+          {/* Action Card... (Same as your code) */}
           <div className="p-8 space-y-8 bg-gray-50/50 dark:bg-gray-800/50">
             <div className="flex justify-between items-center">
               <div>
@@ -219,8 +222,10 @@ const MealDetails = () => {
           </div>
         </div>
 
+        {/* --- REVIEWS SECTION START --- */}
         <div className="p-8 md:p-12 border-t dark:border-gray-700">
           <div className="flex flex-col lg:flex-row gap-16">
+            {/* 1. Review Form Area */}
             <div className="lg:w-1/3">
               <h2 className="text-3xl font-black mb-2 dark:text-white italic tracking-tighter">
                 FEEDBACK
@@ -280,6 +285,7 @@ const MealDetails = () => {
               )}
             </div>
 
+            {/* 2. Reviews Display List */}
             <div className="lg:w-2/3">
               <div className="flex items-center justify-between mb-8 border-b pb-4 dark:border-gray-700">
                 <h3 className="font-black text-gray-400 uppercase tracking-widest text-xs">

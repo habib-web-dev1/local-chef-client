@@ -23,6 +23,7 @@ const MealsPage = () => {
   const [sortType, setSortType] = useState("createdAt");
   const [order, setOrder] = useState("desc");
 
+  // Vite uses VITE_ prefix
   const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
   useEffect(() => {
@@ -61,6 +62,7 @@ const MealsPage = () => {
           <FaUtensils className="mr-3 text-orange-600" /> Discover Local Meals
         </h1>
 
+        {/* --- Search and Filter Bar --- */}
         <div className="flex flex-col md:flex-row justify-between items-center bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md mb-8 gap-4">
           <div className="relative w-full md:w-1/2">
             <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -70,7 +72,7 @@ const MealsPage = () => {
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
-                setCurrentPage(1);
+                setCurrentPage(1); // Reset to page 1 on search
               }}
               className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg outline-none focus:ring-2 focus:ring-orange-500"
             />
@@ -109,6 +111,7 @@ const MealsPage = () => {
           </div>
         </div>
 
+        {/* --- Meal Grid --- */}
         {loading ? (
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-orange-500"></div>
@@ -126,6 +129,7 @@ const MealsPage = () => {
           </motion.div>
         )}
 
+        {/* --- Pagination --- */}
         {!loading && totalPages > 1 && (
           <div className="flex justify-center items-center mt-12 space-x-2">
             <button

@@ -12,7 +12,7 @@ const MealCard = ({ meal }) => {
   const axiosSecure = useAxiosSecure();
 
   const handleFavorite = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent Link navigation
     if (!user) {
       return Swal.fire({
         title: "Login Required",

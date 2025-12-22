@@ -20,6 +20,7 @@ const FavoriteMeals = () => {
   const [isLoading, setIsLoading] = useState(true);
   const axiosSecure = useAxiosSecure();
 
+  // --- Fetch Favorites ---
   useEffect(() => {
     const fetchFavorites = async () => {
       try {

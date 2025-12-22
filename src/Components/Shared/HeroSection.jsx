@@ -4,6 +4,7 @@ import { Link } from "react-router";
 import { FaArrowRight } from "react-icons/fa";
 
 const HeroSection = () => {
+  // Framer Motion variants for the animation
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -26,15 +27,18 @@ const HeroSection = () => {
 
   return (
     <section className="relative h-[80vh] min-h-[500px] flex items-center justify-center bg-gray-100 dark:bg-gray-900 overflow-hidden">
+      {/* Background Image/Overlay */}
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{
           backgroundImage: "url('https://i.ibb.co.com/mrKN2Yy5/Hero-Img.png')",
-        }}
+        }} // Use a high-quality food image here
       >
+        {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-black opacity-60 dark:opacity-70"></div>
       </div>
 
+      {/* Content Container (Animated) */}
       <div className="relative z-10 text-center text-white p-4 max-w-4xl mx-auto">
         <motion.div
           variants={containerVariants}

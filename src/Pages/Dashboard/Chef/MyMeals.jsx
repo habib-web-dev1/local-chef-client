@@ -20,17 +20,18 @@ const ITEMS_PER_PAGE = 10;
 
 const MyMeals = () => {
   useTitle("My Meals");
-  const [meals, setMeals] = useState([]);
+  const [meals, setMeals] = useState([]); // Real data starts as empty array
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
 
+  // 🎯 Fetch Real Data from your Backend
   useEffect(() => {
     const fetchMyMeals = async () => {
       try {
         const res = await axios.get(
           `${import.meta.env.VITE_SERVER_URL}/meals/my-meals`,
           {
-            withCredentials: true,
+            withCredentials: true, // Required to send JWT cookie
           }
         );
         setMeals(res.data);
@@ -43,12 +44,14 @@ const MyMeals = () => {
     fetchMyMeals();
   }, []);
 
+  // --- PAGINATION LOGIC ---
   const totalPages = Math.ceil(meals.length / ITEMS_PER_PAGE);
   const currentMeals = meals.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
 
+  // 🎯 Real Delete Handler
   const handleDelete = (id, name) => {
     Swal.fire({
       title: `Delete "${name}"?`,
@@ -159,8 +162,11 @@ const MyMeals = () => {
             ))}
           </div>
 
+          {/* Pagination Component */}
           {totalPages > 1 && (
-            <div className="flex justify-center items-center mt-8 space-x-2"></div>
+            <div className="flex justify-center items-center mt-8 space-x-2">
+              {/* Pagination buttons logic stays similar to your code */}
+            </div>
           )}
         </>
       )}

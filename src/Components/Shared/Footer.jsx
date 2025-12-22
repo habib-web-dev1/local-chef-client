@@ -11,6 +11,7 @@ import {
 import { motion } from "framer-motion";
 
 const Footer = () => {
+  // Data for easy content management
   const contact = {
     phone: "+880 17XX XXX XXX",
     email: "support@localchef.com",
@@ -49,6 +50,7 @@ const Footer = () => {
     >
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 border-b border-gray-700 pb-8">
+          {/* 1. About/Logo Section */}
           <div className="space-y-4">
             <Link
               to="/"
@@ -64,6 +66,7 @@ const Footer = () => {
               affordable, and made with love.
             </p>
 
+            {/* Social Media Links */}
             <div className="flex space-x-4 pt-2">
               {socialLinks.map((link, index) => {
                 const Icon = link.icon;
@@ -84,6 +87,7 @@ const Footer = () => {
             </div>
           </div>
 
+          {/* 2. Navigation/Quick Links (Optional but good practice) */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-white border-b-2 border-orange-500/50 pb-1">
               Quick Links
@@ -124,6 +128,7 @@ const Footer = () => {
             </ul>
           </div>
 
+          {/* 3. Contact Details */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-white border-b-2 border-orange-500/50 pb-1">
               Get In Touch
@@ -144,6 +149,7 @@ const Footer = () => {
             </ul>
           </div>
 
+          {/* 4. Working Hours */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-white border-b-2 border-orange-500/50 pb-1">
               Working Hours
@@ -162,6 +168,7 @@ const Footer = () => {
           </div>
         </div>
 
+        {/* Copyright Information */}
         <div className="pt-4 text-center text-sm text-gray-500 dark:text-gray-400">
           <p>
             &copy; {new Date().getFullYear()} LocalChefBazaar. All rights

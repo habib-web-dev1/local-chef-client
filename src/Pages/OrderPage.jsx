@@ -8,7 +8,7 @@ import {
   FaShoppingBag,
   FaCreditCard,
   FaSpinner,
-  FaLock,
+  FaLock, // Import FaLock for the fraud state
 } from "react-icons/fa";
 import useAuth from "../Hooks/useAuth";
 import useAxiosSecure from "../Hooks/useAxiosSecure";
@@ -17,7 +17,7 @@ import Swal from "sweetalert2";
 const OrderPage = () => {
   const { state } = useLocation();
   const { meal } = state || {};
-  const { user, dbUser } = useAuth();
+  const { user, dbUser } = useAuth(); // 🎯 Destructure dbUser here
   const navigate = useNavigate();
   const axiosSecure = useAxiosSecure();
   const [quantity, setQuantity] = useState(1);
@@ -48,6 +48,7 @@ const OrderPage = () => {
   const totalPrice = (meal.price * quantity).toFixed(2);
 
   const onSubmit = async (data) => {
+    // 🛡️ Extra Frontend Guard: Prevent submission if fraud
     if (dbUser?.status === "fraud") {
       Swal.fire("Access Denied", "Your account is restricted.", "error");
       return;
@@ -90,6 +91,7 @@ const OrderPage = () => {
       </h2>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        {/* --- Order Summary --- */}
         <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 h-fit">
           <h3 className="text-sm font-black uppercase tracking-widest text-gray-400 mb-6">
             Order Summary
@@ -142,6 +144,7 @@ const OrderPage = () => {
           </div>
         </div>
 
+        {/* --- Shipping Form --- */}
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 space-y-6"
@@ -189,6 +192,7 @@ const OrderPage = () => {
             )}
           </div>
 
+          {/* 🎯 FRAUD STATUS CONDITIONAL BUTTON SECTION */}
           {dbUser?.status === "fraud" ? (
             <motion.div
               initial={{ opacity: 0 }}
