@@ -116,6 +116,7 @@ const ManageUsers = () => {
       animate={{ opacity: 1, y: 0 }}
       className="max-w-7xl mx-auto"
     >
+      {/* Header Section */}
       <div className="bg-white dark:bg-gray-800 p-8 rounded-t-[2rem] border-b border-gray-100 dark:border-gray-700 flex flex-col md:flex-row justify-between items-center gap-4 shadow-sm">
         <div>
           <h2 className="text-3xl font-black text-gray-900 dark:text-white flex items-center">
@@ -135,6 +136,7 @@ const ManageUsers = () => {
         </div>
       </div>
 
+      {/* Table Section */}
       <div className="bg-white dark:bg-gray-800 rounded-b-[2rem] shadow-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
@@ -165,6 +167,7 @@ const ManageUsers = () => {
                     exit={{ opacity: 0 }}
                     className="hover:bg-gray-50/80 dark:hover:bg-gray-700/30 transition-colors group"
                   >
+                    {/* User Info */}
                     <td className="px-8 py-6">
                       <div className="flex items-center gap-4">
                         <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center font-black text-orange-700 text-xl border-2 border-white dark:border-gray-600 shadow-sm">
@@ -182,12 +185,14 @@ const ManageUsers = () => {
                       </div>
                     </td>
 
+                    {/* Role */}
                     <td className="px-8 py-6 text-center">
                       <div className="flex justify-center">
                         {getRoleBadge(user.role)}
                       </div>
                     </td>
 
+                    {/* Status */}
                     <td className="px-8 py-6 text-center">
                       {user.status === "fraud" ? (
                         <span className="inline-flex items-center gap-1.5 text-red-500 font-bold text-xs uppercase tracking-tight">
@@ -200,6 +205,7 @@ const ManageUsers = () => {
                       )}
                     </td>
 
+                    {/* Actions */}
                     <td className="px-8 py-6">
                       <div className="flex justify-end gap-2">
                         {user.role !== "admin" && (

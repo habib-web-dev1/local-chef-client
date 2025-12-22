@@ -36,6 +36,10 @@ const AuthProvider = ({ children }) => {
       const res = await axios.post(`${API_BASE}/auth/jwt`, userInfo, {
         withCredentials: true,
       });
+
+      if (res.data.success) {
+        console.log("JWT issued successfully");
+      }
     } catch (error) {
       console.error("JWT issue failed:", error);
     }
@@ -50,10 +54,15 @@ const AuthProvider = ({ children }) => {
           withCredentials: true,
         }
       );
+      console.log("JWT cleared successfully");
     } catch (error) {
       console.error("JWT clearance failed:", error);
     }
   };
+
+  // -----------------------------------------------------------------------
+  // 2. FETCH DB USER & ROLE (Connecting to /api/users/profile)
+  // -----------------------------------------------------------------------
 
   const fetchDbUser = async (uid) => {
     try {
@@ -61,6 +70,7 @@ const AuthProvider = ({ children }) => {
         withCredentials: true,
       });
       setDbUser(res.data);
+      // console.log('DB User data fetched:', res.data);
       return res.data;
     } catch (error) {
       console.error("Failed to fetch DB user data:", error);

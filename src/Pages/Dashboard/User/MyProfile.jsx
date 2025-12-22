@@ -23,16 +23,21 @@ import Swal from "sweetalert2";
 
 const MyProfile = () => {
   useTitle("My Profile");
-  const { user, dbUser, loading, updateUserProfileInDb } = useAuth();
+  const { user, dbUser, loading, updateUserProfile } = useAuth();
   const axiosSecure = useAxiosSecure();
   const [isEditing, setIsEditing] = useState(false);
 
-  const { register, handleSubmit, reset } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
     defaultValues: {
-      name: dbUser?.displayName || user?.displayName || "",
-      photoURL: dbUser?.photoURL || user?.photoURL || "",
+      name: user?.displayName || "",
+      photoURL: user?.photoURL || "",
       address: dbUser?.address || "",
-      bio: dbUser?.bio || (dbUser?.chefDetails ? dbUser.chefDetails.bio : ""),
+      bio: dbUser?.chefDetails?.bio || "",
     },
   });
 
@@ -57,25 +62,34 @@ const MyProfile = () => {
 
   const onSubmit = async (data) => {
     try {
-      await updateUserProfileInDb({
+      //  Update Firebase Auth Profile first
+      await updateUserProfile(data.name, data.photoURL);
+
+      //  Update MongoDB Profile
+      const response = await axiosSecure.patch("/users/profile", {
         displayName: data.name,
         photoURL: data.photoURL,
         address: data.address,
-        bio: data.bio,
+        bio: data.bio || "",
       });
 
-      Swal.fire({
-        title: "Success!",
-        text: "Profile updated successfully",
-        icon: "success",
-        timer: 1500,
-        showConfirmButton: false,
-      });
-      setIsEditing(false);
+      if (response.data.user) {
+        Swal.fire({
+          title: "Profile Updated!",
+          text: "Your changes have been saved successfully.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+        setIsEditing(false);
+      }
     } catch (error) {
       console.error("Update failed:", error);
-
-      Swal.fire("Error", "Check your connection or login again", "error");
+      Swal.fire(
+        "Error",
+        error.response?.data?.message || "Failed to update profile.",
+        "error"
+      );
     }
   };
 
@@ -190,7 +204,7 @@ const MyProfile = () => {
                   <FaTimesCircle />
                 ) : (
                   <FaCheckCircle />
-                )}{" "}
+                )}
                 {dbUser?.status || "active"}
               </span>
             </div>

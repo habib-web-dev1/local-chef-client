@@ -121,6 +121,7 @@ const ManageRequests = () => {
       animate={{ opacity: 1, scale: 1 }}
       className="max-w-7xl mx-auto"
     >
+      {/* Header */}
       <div className="bg-white dark:bg-gray-800 p-8 rounded-t-[2rem] border-b border-gray-100 dark:border-gray-700 flex flex-col md:flex-row justify-between items-center shadow-sm">
         <div>
           <h2 className="text-3xl font-black text-gray-900 dark:text-white flex items-center">
@@ -140,6 +141,7 @@ const ManageRequests = () => {
         )}
       </div>
 
+      {/* Table Section */}
       <div className="bg-white dark:bg-gray-800 rounded-b-[2rem] shadow-2xl overflow-hidden">
         {requests.length === 0 ? (
           <div className="p-20 text-center">
@@ -182,6 +184,7 @@ const ManageRequests = () => {
                       animate={{ opacity: 1 }}
                       className="hover:bg-gray-50/80 dark:hover:bg-gray-700/30 transition-colors group"
                     >
+                      {/* User Info */}
                       <td className="px-8 py-6">
                         <div className="flex items-center gap-4">
                           <div className="h-12 w-12 rounded-full bg-slate-100 dark:bg-gray-700 flex items-center justify-center">
@@ -199,6 +202,7 @@ const ManageRequests = () => {
                         </div>
                       </td>
 
+                      {/* Type */}
                       <td className="px-8 py-6 text-center">
                         <span
                           className={`inline-flex items-center gap-1 font-bold text-sm ${
@@ -212,10 +216,12 @@ const ManageRequests = () => {
                         </span>
                       </td>
 
+                      {/* Status */}
                       <td className="px-8 py-6 text-center">
                         {getStatusBadge(request.status)}
                       </td>
 
+                      {/* Actions */}
                       <td className="px-8 py-6">
                         <div className="flex justify-end gap-3">
                           {request.status === "pending" ? (

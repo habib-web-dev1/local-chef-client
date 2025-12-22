@@ -30,6 +30,7 @@ const PIE_COLORS = ["#10B981", "#F59E0B", "#EF4444", "#6366F1"];
 
 const PlatformStatistics = () => {
   useTitle("Platform Statistics");
+
   const axiosSecure = useAxiosSecure();
   const { user, loading: authLoading } = useAuth();
   const [stats, setStats] = useState(null);
@@ -64,6 +65,7 @@ const PlatformStatistics = () => {
       animate={{ opacity: 1 }}
       className="p-6 space-y-8 bg-gray-50 dark:bg-gray-900 min-h-screen"
     >
+      {/* Header section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-200 dark:border-gray-700 pb-6">
         <div>
           <h2 className="text-4xl font-black text-gray-900 dark:text-white tracking-tight flex items-center">
@@ -83,6 +85,7 @@ const PlatformStatistics = () => {
         </div>
       </div>
 
+      {/* --- 1. Stat Cards --- */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="Total Revenue"
@@ -111,7 +114,9 @@ const PlatformStatistics = () => {
         />
       </div>
 
+      {/* --- 2. Charts Section --- */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Revenue Bar Chart */}
         <ChartContainer
           title="Revenue Growth"
           Icon={FaChartBar}
@@ -159,6 +164,7 @@ const PlatformStatistics = () => {
           )}
         </ChartContainer>
 
+        {/* Status Pie Chart */}
         <ChartContainer title="Order Distribution" Icon={FaChartPie}>
           {stats?.orderStatusData ? (
             <ResponsiveContainer width="100%" height="100%">
