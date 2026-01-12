@@ -14,11 +14,10 @@ const UpdateMeal = () => {
 
   const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
-  // 1. Fetch existing meal data
   useEffect(() => {
     axios.get(`${SERVER_URL}/meals/${id}`).then((res) => {
       setMeal(res.data);
-      reset(res.data); // Pre-fill the form with existing data
+      reset(res.data);
     });
   }, [id, reset, SERVER_URL]);
 
@@ -42,7 +41,6 @@ const UpdateMeal = () => {
         Swal.fire("Success", "Meal updated successfully!", "success");
         navigate("/dashboard/my-meals");
       } else {
-        // If matchedCount is 0, it means the ID was wrong or the meal was deleted
         Swal.fire("Error", "Meal not found or no changes made.", "info");
       }
     } catch (error) {
@@ -94,7 +92,7 @@ const UpdateMeal = () => {
           </label>
           <textarea
             {...register("ingredients")}
-            defaultValue={meal.ingredients?.join(", ")} // Ensures it looks like "chicken, salt"
+            defaultValue={meal.ingredients?.join(", ")}
             className="w-full p-2 border rounded dark:bg-gray-700 dark:text-white"
             rows="3"
           />

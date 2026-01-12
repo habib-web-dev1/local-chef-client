@@ -1,0 +1,71 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  theme: {
+    extend: {
+      fontFamily: {
+        primary: ["Inter", "system-ui", "-apple-system", "sans-serif"],
+        heading: ["Inter", "system-ui", "-apple-system", "sans-serif"],
+      },
+      colors: {
+        primary: {
+          50: "rgb(var(--color-neutral-50) / <alpha-value>)",
+          100: "rgb(var(--color-neutral-100) / <alpha-value>)",
+          200: "rgb(var(--color-neutral-200) / <alpha-value>)",
+          300: "rgb(var(--color-neutral-300) / <alpha-value>)",
+          400: "rgb(var(--color-neutral-400) / <alpha-value>)",
+          500: "rgb(var(--color-neutral-500) / <alpha-value>)",
+          600: "rgb(var(--color-primary) / <alpha-value>)",
+          700: "rgb(var(--color-neutral-700) / <alpha-value>)",
+          800: "rgb(var(--color-neutral-800) / <alpha-value>)",
+          900: "rgb(var(--color-neutral-900) / <alpha-value>)",
+          950: "rgb(var(--color-neutral-950) / <alpha-value>)",
+        },
+      },
+      spacing: {
+        1: "var(--spacing-1)",
+        2: "var(--spacing-2)",
+        3: "var(--spacing-3)",
+        4: "var(--spacing-4)",
+        5: "var(--spacing-5)",
+        6: "var(--spacing-6)",
+        8: "var(--spacing-8)",
+        10: "var(--spacing-10)",
+        12: "var(--spacing-12)",
+        16: "var(--spacing-16)",
+        20: "var(--spacing-20)",
+        24: "var(--spacing-24)",
+      },
+      borderRadius: {
+        sm: "var(--radius-sm)",
+        md: "var(--radius-md)",
+        lg: "var(--radius-lg)",
+        xl: "var(--radius-xl)",
+        "2xl": "var(--radius-2xl)",
+        full: "var(--radius-full)",
+      },
+      boxShadow: {
+        sm: "var(--shadow-sm)",
+        md: "var(--shadow-md)",
+        lg: "var(--shadow-lg)",
+        xl: "var(--shadow-xl)",
+      },
+      transitionDuration: {
+        fast: "var(--duration-fast)",
+        normal: "var(--duration-normal)",
+        slow: "var(--duration-slow)",
+      },
+      zIndex: {
+        dropdown: "var(--z-dropdown)",
+        sticky: "var(--z-sticky)",
+        fixed: "var(--z-fixed)",
+        "modal-backdrop": "var(--z-modal-backdrop)",
+        modal: "var(--z-modal)",
+        popover: "var(--z-popover)",
+        tooltip: "var(--z-tooltip)",
+      },
+    },
+  },
+  plugins: [],
+  darkMode: ["class", '[data-theme="dark"]'],
+};

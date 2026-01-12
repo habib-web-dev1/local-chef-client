@@ -8,10 +8,9 @@ const CustomerReviews = () => {
   const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
   useEffect(() => {
-    // 🎯 Fetching real reviews from your backend
     axios
       .get(`${SERVER_URL}/reviews`)
-      .then((res) => setReviews(res.data.slice(0, 6))) // Show only first 6
+      .then((res) => setReviews(res.data.slice(0, 6)))
       .catch((err) => console.error("Error fetching reviews:", err));
   }, [SERVER_URL]);
 

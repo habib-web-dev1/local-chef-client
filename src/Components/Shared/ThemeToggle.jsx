@@ -1,24 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { FaSun, FaMoon } from "react-icons/fa";
+import { useDesignSystem } from "../../context/DesignSystemContext";
 
 const ThemeToggle = () => {
-  // Initialize state from localStorage or default to light
-  const [isDark, setIsDark] = useState(
-    localStorage.getItem("theme") === "dark"
-  );
+  const { theme, updateTheme, isDark, patterns } = useDesignSystem();
 
-  useEffect(() => {
-    const theme = isDark ? "dark" : "light";
-    // This is the key for DaisyUI v4
-    document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("theme", theme);
-  }, [isDark]);
+  const toggleTheme = () => {
+    updateTheme(isDark ? "light" : "dark");
+  };
 
   return (
     <button
-      onClick={() => setIsDark(!isDark)}
-      className="p-3 rounded-2xl bg-base-200 dark:bg-gray-800 text-orange-500 transition-all duration-300 hover:scale-110 active:scale-95 shadow-sm border border-base-300 dark:border-gray-700"
-      aria-label="Toggle Theme"
+      onClick={toggleTheme}
+      className={`p-3 rounded-2xl bg-gray-100 dark:bg-gray-800 text-orange-500 ${patterns.transition} hover:scale-110 active:scale-95 shadow-sm border border-gray-200 dark:border-gray-700 ${patterns.focusRing}`}
+      aria-label={`Switch to ${isDark ? "light" : "dark"} theme`}
     >
       {isDark ? (
         <FaSun className="text-xl animate-pulse" />

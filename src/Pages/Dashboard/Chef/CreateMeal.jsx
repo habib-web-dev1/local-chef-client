@@ -18,6 +18,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import useTitle from "../../../Hooks/useTitle";
 import useAuth from "../../../Hooks/useAuth";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
 const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
@@ -27,6 +28,7 @@ const CreateMeal = () => {
   const { user, dbUser, loading } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
+  const axiosSecure = useAxiosSecure();
 
   const {
     register,
@@ -80,8 +82,8 @@ const CreateMeal = () => {
         const mealData = {
           foodName: data.foodName,
           foodImage: imgRes.data.data.display_url,
-          category: data.category, // Ensure this is captured
-          description: data.description, // Ensure this is captured
+          category: data.category,
+          description: data.description,
           portion: data.portion,
           price: parseFloat(data.price),
           estimatedDeliveryTime: `${data.estimatedDeliveryTime} mins`,
@@ -96,11 +98,7 @@ const CreateMeal = () => {
           createdAt: new Date().toISOString(),
         };
 
-        const response = await axios.post(
-          `${import.meta.env.VITE_SERVER_URL}/meals`,
-          mealData,
-          { withCredentials: true }
-        );
+        const response = await axiosSecure.post("/meals", mealData);
 
         if (response.data.insertedId) {
           Swal.fire({
@@ -114,9 +112,10 @@ const CreateMeal = () => {
         }
       }
     } catch (error) {
+      console.error("Meal Creation Error:", error);
       Swal.fire(
         "Error",
-        "Failed to list the meal. Please check your connection.",
+        error.response?.data?.message || "Failed to list the meal.",
         "error"
       );
     } finally {

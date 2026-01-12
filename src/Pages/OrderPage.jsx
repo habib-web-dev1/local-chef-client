@@ -8,7 +8,7 @@ import {
   FaShoppingBag,
   FaCreditCard,
   FaSpinner,
-  FaLock, // Import FaLock for the fraud state
+  FaLock,
 } from "react-icons/fa";
 import useAuth from "../Hooks/useAuth";
 import useAxiosSecure from "../Hooks/useAxiosSecure";
@@ -37,7 +37,7 @@ const OrderPage = () => {
         </p>
         <button
           onClick={() => navigate("/meals")}
-          className="btn btn-primary bg-orange-600 text-white px-6 py-2 rounded-lg"
+          className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors"
         >
           Browse Meals
         </button>

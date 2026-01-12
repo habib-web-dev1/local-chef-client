@@ -1,18 +1,20 @@
-import React from "react";
-import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router";
 import { FaHeart, FaStar, FaClock } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { useAuth } from "../../Providers/AuthProvider";
 import useAxiosSecure from "../../Hooks/useAxiosSecure";
+import Card from "../UI/Card";
+import Button from "../UI/Button";
+import { useDesignSystem } from "../../context/DesignSystemContext";
 
 const MealCard = ({ meal }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const axiosSecure = useAxiosSecure();
+  const { patterns } = useDesignSystem();
 
   const handleFavorite = async (e) => {
-    e.preventDefault(); // Prevent Link navigation
+    e.preventDefault();
     if (!user) {
       return Swal.fire({
         title: "Login Required",
@@ -41,55 +43,77 @@ const MealCard = ({ meal }) => {
   };
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      className="group bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-xl transition-all overflow-hidden flex flex-col border border-gray-100 dark:border-gray-700"
-    >
-      <div className="relative h-48 overflow-hidden">
+    <div className="meal-card group">
+      <div className="meal-card-image">
         <img
           src={meal.foodImage}
           alt={meal.foodName}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
+
+        {/* Favorite Button */}
         <button
           onClick={handleFavorite}
-          className="absolute top-3 right-3 p-2 bg-white/90 dark:bg-gray-900/90 rounded-full text-red-500 shadow-sm hover:bg-red-500 hover:text-white transition-colors"
+          className={`absolute top-3 right-3 p-2 bg-white/90 dark:bg-gray-900/90 rounded-full text-red-500 shadow-sm hover:bg-red-500 hover:text-white ${patterns.transition} ${patterns.focusRing}`}
+          aria-label="Add to favorites"
         >
           <FaHeart />
         </button>
-        <div className="absolute bottom-3 left-3 bg-orange-600 text-white px-2 py-1 rounded-lg text-sm font-bold">
-          ${meal.price.toFixed(2)}
+
+        {/* Price Tag */}
+        <div className="absolute bottom-3 left-3 bg-orange-600 text-white px-3 py-1 rounded-lg text-sm font-bold shadow-sm">
+          ${meal.price?.toFixed(2) || "0.00"}
         </div>
       </div>
 
-      <div className="p-5 flex-grow">
-        <h3 className="text-lg font-bold dark:text-white truncate">
+      <div className="meal-card-content">
+        <Card.Title size="md" className="text-lg truncate mb-2">
           {meal.foodName}
-        </h3>
-        <div className="flex items-center my-2 text-sm">
-          <FaStar className="text-yellow-400 mr-1" />
-          <span className="dark:text-gray-300 font-medium">
-            {meal.rating || 0}
-          </span>
-          <span className="mx-2 text-gray-300">|</span>
-          <FaClock className="text-orange-400 mr-1" />
-          <span className="dark:text-gray-300">
-            {meal.estimatedDeliveryTime || "30m"}
-          </span>
+        </Card.Title>
+
+        {meal.description && (
+          <Card.Description className="text-sm mb-3 line-clamp-2">
+            {meal.description}
+          </Card.Description>
+        )}
+
+        {/* Meta Information */}
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-1">
+            <FaStar className="text-yellow-400" />
+            <span className={`font-medium ${patterns.textSecondary}`}>
+              {meal.rating || 0}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <FaClock className="text-orange-400" />
+            <span className={patterns.textSecondary}>
+              {meal.estimatedDeliveryTime || "30m"}
+            </span>
+          </div>
         </div>
+
+        {meal.chefName && (
+          <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+            by {meal.chefName}
+          </div>
+        )}
       </div>
 
-      <div className="p-4 pt-0">
-        <Link to={`/meal/${meal._id}`}>
-          <button className="w-full py-2 bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 rounded-xl font-bold hover:bg-orange-600 hover:text-white transition-all">
+      <div className="meal-card-actions">
+        <Link to={`/meal/${meal._id}`} className="block">
+          <Button
+            variant="outline"
+            fullWidth
+            size="md"
+            className="hover:bg-orange-600 hover:text-white hover:border-orange-600"
+          >
             View Details
-          </button>
+          </Button>
         </Link>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

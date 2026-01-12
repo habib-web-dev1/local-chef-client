@@ -20,38 +20,54 @@ const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [dbUser, setDbUser] = useState(null); // MongoDB user data (role, status, chefId)
+  const [dbUser, setDbUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // --- JWT Token Generator
+  // const getJwtToken = async (currentUser) => {
+  //   try {
+  //     const userInfo = {
+  //       email: currentUser.email,
+  //       uid: currentUser.uid,
+  //     };
+
+  //     // Sends the info to the Express server to receive an HTTP-only cookie
+  //     await axios.post(`${SERVER_URL}/auth/jwt`, userInfo, {
+  //       withCredentials: true,
+  //     });
+  //   } catch (error) {
+  //     console.error("Failed to fetch JWT:", error);
+  //   }
+  // };
+
   const getJwtToken = async (currentUser) => {
     try {
-      const userInfo = {
-        email: currentUser.email,
-        uid: currentUser.uid,
-      };
+      const userInfo = { email: currentUser.email, uid: currentUser.uid };
 
-      // Sends the info to the Express server to receive an HTTP-only cookie
-      await axios.post(`${SERVER_URL}/jwt`, userInfo, {
-        withCredentials: true,
-      });
+      // Request token from server
+      const res = await axios.post(`${SERVER_URL}/auth/jwt`, userInfo);
+
+      //  Store token manually in LocalStorage
+      if (res.data.token) {
+        localStorage.setItem("access-token", res.data.token);
+      }
     } catch (error) {
       console.error("Failed to fetch JWT:", error);
     }
   };
 
-  // --- JWT Token Remover (Clears HTTP-only cookie on server) ---
-  const clearJwtToken = async () => {
-    try {
-      await axios.post(
-        `${SERVER_URL}/auth/logout`,
-        {},
-        { withCredentials: true }
-      );
-    } catch (error) {
-      console.error("Failed to clear JWT:", error);
-    }
-  };
+  // --- JWT Token Remover
+  // const clearJwtToken = async () => {
+  //   try {
+  //     await axios.post(
+  //       `${SERVER_URL}/auth/logout`,
+  //       {},
+  //       { withCredentials: true }
+  //     );
+  //   } catch (error) {
+  //     console.error("Failed to clear JWT:", error);
+  //   }
+  // };
 
   // --- Helper function to save/update user on MongoDB ---
   // Called after any successful Firebase sign-in or registration
@@ -82,7 +98,7 @@ const AuthProvider = ({ children }) => {
 
   const signIn = (email, password) => {
     setLoading(true);
-    // The component using this must handle .then()
+
     return signInWithEmailAndPassword(auth, email, password);
   };
 
@@ -93,18 +109,27 @@ const AuthProvider = ({ children }) => {
     return signInWithPopup(auth, provider);
   };
 
+  // const logOut = async () => {
+  //   try {
+  //     await clearJwtToken(); // 1. Clear JWT cookie on server
+  //     await signOut(auth); // 2. Sign out from Firebase (Triggers observer)
+  //   } catch (error) {
+  //     console.error("Logout error:", error);
+  //     // Fallback cleanup
+  //     setUser(null);
+  //     setDbUser(null);
+  //   }
+  // };
+
   const logOut = async () => {
     try {
-      await clearJwtToken(); // 1. Clear JWT cookie on server
-      await signOut(auth); // 2. Sign out from Firebase (Triggers observer)
+      //  Simply remove token from storage
+      localStorage.removeItem("access-token");
+      await signOut(auth);
     } catch (error) {
       console.error("Logout error:", error);
-      // Fallback cleanup
-      setUser(null);
-      setDbUser(null);
     }
   };
-
   const updateUserProfile = (name, photoURL) => {
     return updateProfile(auth.currentUser, {
       displayName: name,
@@ -112,24 +137,59 @@ const AuthProvider = ({ children }) => {
     });
   };
 
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+  //     // 1. Set the firebase user first
+  //     setUser(currentUser);
+
+  //     if (currentUser) {
+  //       try {
+  //         await axios.post(
+  //           `${SERVER_URL}/auth/jwt`,
+  //           { email: currentUser.email },
+  //           { withCredentials: true }
+  //         );
+
+  //         // 3. Get User Profile from DB
+  //         const res = await axios.get(
+  //           `${SERVER_URL}/users/${currentUser.email}`,
+  //           { withCredentials: true }
+  //         );
+
+  //         setDbUser(res.data);
+  //       } catch (err) {
+  //         console.error("Auth sync error:", err);
+  //         setDbUser(null);
+  //       } finally {
+  //         // 🎯 STOP LOADING ONLY AFTER DB DATA IS FETCHED
+  //         setLoading(false);
+  //       }
+  //     } else {
+  //       // No user logged in
+  //       setDbUser(null);
+  //       setLoading(false);
+  //     }
+  //   });
+
+  //   return () => unsubscribe();
+  // }, []);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      // 1. Set the firebase user first
       setUser(currentUser);
 
       if (currentUser) {
         try {
-          // 2. Get JWT (Using the correct /auth prefix)
-          await axios.post(
-            `${SERVER_URL}/auth/jwt`,
-            { email: currentUser.email },
-            { withCredentials: true }
-          );
+          //  Corrected usage of getJwtToken
+          await getJwtToken(currentUser);
 
-          // 3. Get User Profile from DB
+          // Get User Profile from DB
+
+          const token = localStorage.getItem("access-token");
           const res = await axios.get(
             `${SERVER_URL}/users/${currentUser.email}`,
-            { withCredentials: true }
+            {
+              headers: { authorization: `Bearer ${token}` },
+            }
           );
 
           setDbUser(res.data);
@@ -137,11 +197,11 @@ const AuthProvider = ({ children }) => {
           console.error("Auth sync error:", err);
           setDbUser(null);
         } finally {
-          // 🎯 STOP LOADING ONLY AFTER DB DATA IS FETCHED
           setLoading(false);
         }
       } else {
-        // No user logged in
+        // Cleanup storage if no user
+        localStorage.removeItem("access-token");
         setDbUser(null);
         setLoading(false);
       }
@@ -158,7 +218,7 @@ const AuthProvider = ({ children }) => {
     signInWithGoogle,
     logOut,
     updateUserProfile,
-    saveUserToDb, // Exposed for components that call createUser/signIn directly
+    saveUserToDb,
   };
 
   return (

@@ -20,7 +20,6 @@ const ManageUsers = () => {
   const axiosSecure = useAxiosSecure();
   const queryClient = useQueryClient();
 
-  // 1. Fetch Users using TanStack Query
   const {
     data: users = [],
     isLoading,
@@ -33,7 +32,6 @@ const ManageUsers = () => {
     },
   });
 
-  // 2. Mutation for updating User Role/Status
   const updateMutation = useMutation({
     mutationFn: async ({ uid, updateData }) => {
       const res = await axiosSecure.patch(
@@ -57,7 +55,6 @@ const ManageUsers = () => {
     },
   });
 
-  // --- UI Helpers ---
   const getRoleBadge = (role) => {
     const roles = {
       admin: {
@@ -274,7 +271,6 @@ const ManageUsers = () => {
   );
 };
 
-// Reusable Action Button Sub-component
 const ActionButton = ({ icon, onClick, disabled, variant, label }) => {
   const variants = {
     red: "bg-red-50 text-red-600 hover:bg-red-600 hover:text-white",

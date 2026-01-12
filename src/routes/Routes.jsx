@@ -1,7 +1,12 @@
 import { createBrowserRouter } from "react-router";
-import MainLayout from "../layouts/MainLayout";
+
 import ErrorPage from "../Pages/Shared/ErrorPage";
 import Home from "../Pages/Home";
+import About from "../Pages/About";
+import Contact from "../Pages/Contact";
+import Help from "../Pages/Help";
+import PrivacyPolicy from "../Pages/PrivacyPolicy";
+import TermsOfService from "../Pages/TermsOfService";
 import Login from "../Pages/Auth/Login";
 import Register from "../Pages/Auth/Register";
 import MealsPage from "../Pages/MealsPage";
@@ -24,6 +29,7 @@ import OrderPage from "../Pages/OrderPage";
 import DashboardHome from "../Pages/Dashboard/DashboardHome";
 import CreateMeal from "../Pages/Dashboard/Chef/CreateMeal";
 import PaymentSuccess from "../Pages/Shared/PaymentSuccess";
+import MainLayout from "../Layouts/MainLayout";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +38,11 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { path: "/", element: <Home /> },
+      { path: "/about", element: <About /> },
+      { path: "/contact", element: <Contact /> },
+      { path: "/help", element: <Help /> },
+      { path: "/privacy", element: <PrivacyPolicy /> },
+      { path: "/terms", element: <TermsOfService /> },
       { path: "/login", element: <Login /> },
       { path: "/register", element: <Register /> },
       { path: "/meals", element: <MealsPage /> },

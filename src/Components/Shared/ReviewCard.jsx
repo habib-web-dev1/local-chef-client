@@ -39,7 +39,6 @@ const ReviewCard = ({ review }) => {
         <div className="relative">
           <img
             src={
-              // 🎯 FIXED KEY: reviewerImage
               review.reviewerImage ||
               "https://i.ibb.co/31S99Xp/default-avatar.png"
             }
@@ -52,7 +51,6 @@ const ReviewCard = ({ review }) => {
         <div className="overflow-hidden">
           <div className="flex gap-0.5 mb-1">{ratingStars}</div>
           <p className="font-black text-gray-900 dark:text-white truncate">
-            {/* 🎯 FIXED KEY: reviewerName */}
             {review.reviewerName || "Anonymous User"}
           </p>
           <p className="text-[10px] font-bold text-orange-600 uppercase tracking-widest truncate">

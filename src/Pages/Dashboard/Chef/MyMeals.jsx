@@ -15,25 +15,21 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import useTitle from "../../../Hooks/useTitle";
 import { Link } from "react-router";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const ITEMS_PER_PAGE = 10;
 
 const MyMeals = () => {
   useTitle("My Meals");
-  const [meals, setMeals] = useState([]); // Real data starts as empty array
+  const [meals, setMeals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const axiosSecure = useAxiosSecure();
 
-  // 🎯 Fetch Real Data from your Backend
   useEffect(() => {
     const fetchMyMeals = async () => {
       try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_SERVER_URL}/meals/my-meals`,
-          {
-            withCredentials: true, // Required to send JWT cookie
-          }
-        );
+        const res = await axiosSecure.get("/meals/my-meals");
         setMeals(res.data);
       } catch (err) {
         console.error("Error fetching meals:", err);
@@ -42,7 +38,7 @@ const MyMeals = () => {
       }
     };
     fetchMyMeals();
-  }, []);
+  }, [axiosSecure]);
 
   // --- PAGINATION LOGIC ---
   const totalPages = Math.ceil(meals.length / ITEMS_PER_PAGE);
@@ -51,11 +47,10 @@ const MyMeals = () => {
     currentPage * ITEMS_PER_PAGE
   );
 
-  // 🎯 Real Delete Handler
   const handleDelete = (id, name) => {
     Swal.fire({
       title: `Delete "${name}"?`,
-      text: "You won't be able to revert this!",
+      text: "This action cannot be undone!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
@@ -64,23 +59,23 @@ const MyMeals = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const res = await axios.delete(
-            `${import.meta.env.VITE_SERVER_URL}/meals/${id}`,
-            {
-              withCredentials: true,
-            }
-          );
-          if (res.data.deletedCount > 0) {
+          const res = await axiosSecure.delete(`/meals/${id}`);
+
+          if (res.data.success) {
             setMeals(meals.filter((meal) => meal._id !== id));
             Swal.fire("Deleted!", "Your meal has been removed.", "success");
           }
         } catch (error) {
-          Swal.fire("Error", "Failed to delete meal.", "error");
+          console.error("Delete error:", error);
+          Swal.fire(
+            "Error",
+            "Failed to delete meal. You might not have permission.",
+            "error"
+          );
         }
       }
     });
   };
-
   if (loading)
     return (
       <div className="text-center py-20 dark:text-white">
@@ -164,9 +159,7 @@ const MyMeals = () => {
 
           {/* Pagination Component */}
           {totalPages > 1 && (
-            <div className="flex justify-center items-center mt-8 space-x-2">
-              {/* Pagination buttons logic stays similar to your code */}
-            </div>
+            <div className="flex justify-center items-center mt-8 space-x-2"></div>
           )}
         </>
       )}

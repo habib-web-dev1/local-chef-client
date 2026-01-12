@@ -37,16 +37,15 @@ const PlatformStatistics = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 2. IMPLEMENT THE FETCH LOGIC
     if (!authLoading && user) {
       const fetchStats = async () => {
         try {
           const res = await axiosSecure.get("/admin/stats");
-          setStats(res.data); // Store the data
+          setStats(res.data);
         } catch (err) {
           console.error("Stats fetch error:", err);
         } finally {
-          setLoading(false); // Stop loading regardless of success/fail
+          setLoading(false);
         }
       };
       fetchStats();
@@ -86,7 +85,7 @@ const PlatformStatistics = () => {
         </div>
       </div>
 
-      {/* --- 1. Stat Cards --- */}
+      {/* ---  Stat Cards --- */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="Total Revenue"
@@ -103,7 +102,7 @@ const PlatformStatistics = () => {
         />
         <StatCard
           title="Orders Delivered"
-          value={stats?.delivered} // This will now receive the count from backend
+          value={stats?.delivered}
           Icon={FaCheckCircle}
           color="from-orange-500 to-amber-600"
         />
@@ -115,7 +114,7 @@ const PlatformStatistics = () => {
         />
       </div>
 
-      {/* --- 2. Charts Section --- */}
+      {/* ---  Charts Section --- */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Revenue Bar Chart */}
         <ChartContainer
@@ -229,7 +228,6 @@ const StatCard = ({ title, value, Icon, color, isCurrency }) => (
   </motion.div>
 );
 
-// 🚀 FIXED: Added flex-col and flex-1 wrapper to handle Recharts height inheritance
 const ChartContainer = ({ title, Icon, children, className }) => (
   <div
     className={`bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 h-[450px] flex flex-col ${className}`}
@@ -243,7 +241,6 @@ const ChartContainer = ({ title, Icon, children, className }) => (
       </h3>
     </div>
 
-    {/* This wrapper ensures the ResponsiveContainer has a calculated parent height */}
     <div className="flex-1 min-h-0 w-full">{children}</div>
   </div>
 );

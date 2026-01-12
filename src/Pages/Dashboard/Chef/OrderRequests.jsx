@@ -23,7 +23,6 @@ const OrderRequests = () => {
   const axiosSecure = useAxiosSecure();
   const { user } = useAuth();
 
-  // --- 1. Fetch Real Data from Backend ---
   const fetchChefOrders = async () => {
     try {
       const res = await axiosSecure.get("/orders/chef-requests");
@@ -39,7 +38,6 @@ const OrderRequests = () => {
     if (user?.uid) fetchChefOrders();
   }, [axiosSecure, user]);
 
-  // --- 2. Update Order Status in Database ---
   const handleUpdateStatus = (orderId, newStatus) => {
     Swal.fire({
       title: `Confirm ${newStatus.toUpperCase()}?`,
@@ -56,7 +54,6 @@ const OrderRequests = () => {
           });
 
           if (res.data) {
-            // Update local state for LIVE status update
             setOrders((prev) =>
               prev.map((o) =>
                 o._id === orderId ? { ...o, status: newStatus } : o
@@ -96,7 +93,6 @@ const OrderRequests = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <AnimatePresence>
           {orders.map((order) => {
-            // Logic Helpers for Button Rules
             const isPending = order.status === "pending";
             const isAccepted = order.status === "accepted";
             const isDelivered = order.status === "delivered";
