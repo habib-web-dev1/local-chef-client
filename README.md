@@ -1,70 +1,77 @@
-LocalChefBazaar — Marketplace for Local Home-Cooked Meals
+# 🍽️ LocalChefBazaar  
+### Marketplace for Local Home-Cooked Meals (MERN Stack)
 
-LocalChefBazaar is a modern MERN stack platform that bridges the gap between talented home cooks and customers seeking fresh, healthy, and affordable homemade meals. The platform provides a seamless experience for browsing daily menus, placing orders, and tracking them in real-time, while offering chefs a digital storefront to earn from their own kitchens.
-+2
+LocalChefBazaar is a full-stack MERN platform that connects home chefs with customers who want fresh, healthy, and affordable homemade meals. The application enables users to browse daily menus, place secure orders, and track them in real time, while allowing chefs to manage their digital storefronts.
 
-🚀 Live Demo
+---
 
-https://local-chef-client.vercel.app/
+## 🚀 Live Demo
 
-🛠️ Key Features
-🔐 User Authentication & Roles
+🔗 https://local-chef-client.vercel.app
 
-Role-Based Access Control: Three distinct roles: Admin, Chef, and Normal User.
+---
 
-Firebase Authentication: Secure registration and login using email and password.
-+2
+## 📌 Key Features
 
-JWT Security: Implementation of JSON Web Tokens for secure API access and route protection.
-+1
+### 🔐 Authentication & Authorization
+- Role-based access control: **Admin, Chef, Normal User**
+- Firebase authentication (Email & Password)
+- JWT-based secure API access
+- Protected routes and middleware security
 
-🍽️ Customer Features (Normal User)
+---
 
-Dynamic Meal Browsing: View 6 featured meals on the home page and a full list on the Meals page with sorting and pagination (10 items per page).
-+3
+### 🍽️ Customer (Normal User) Features
+- Browse featured meals on homepage
+- View complete meal list with pagination (10 items/page) and sorting
+- Detailed meal pages with ingredients, chef profile, and delivery time
+- Submit reviews and ratings
+- Save meals to personal favorites list
+- Secure payments using Stripe
 
-Meal Details: Access in-depth information including ingredients, chef experience, and estimated delivery time.
-+2
+---
 
-Reviews & Ratings: Leave feedback on meals and view existing reviews from other users.
-+1
+### 👨‍🍳 Chef Features
+- Create, update, and delete meal listings
+- Upload meal images
+- Accept, cancel, and manage orders in real time
+- Personal dashboard for profile, meals, and orders
 
-Favorites List: Save preferred meals to a personal "Favorites" collection.
-+1
+---
 
-Stripe Integration: Securely pay for orders once they are accepted by the chef.
+### 🛠️ Admin Features
+- Manage all users and mark suspicious accounts as fraud
+- Approve or reject chef/admin requests
+- View platform statistics using charts
+- Monitor payments, users, and order statuses
 
-👨‍🍳 Chef Features
+---
 
-Menu Management: Create, update, and delete meal listings with image upload capabilities.
-+3
+## 💻 Tech Stack
 
-Order Management: Accept, cancel, or mark orders as "delivered" in real-time.
+### Frontend
+- React.js
+- Tailwind CSS
+- Framer Motion
+- React Hook Form
+- Axios
 
-Personal Dashboard: Track personal profile, active meals, and incoming order requests.
+### Backend
+- Node.js
+- Express.js
 
-🛠️ Admin Features
+### Database
+- MongoDB
 
-User Management: Oversee all users and the ability to mark accounts as "fraud".
-+1
+### Authentication & Security
+- Firebase Authentication
+- JSON Web Tokens (JWT)
 
-Request Handling: Approve or reject user requests to become a Chef or an Admin.
+### Payment
+- Stripe
 
-Platform Statistics: Visualize data like total payments, user count, and order statuses using Recharts.
-+4
+### Other Tools
+- Recharts
+- SweetAlert2 / Toast Notifications
 
-💻 Tech Stack
 
-Frontend: React.js, Tailwind CSS, Framer Motion (Animations).
-+1
-
-Backend: Node.js, Express.js.
-
-Database: MongoDB.
-
-Authentication: Firebase & JWT.
-+2
-
-Payment Gateway: Stripe.
-
-Other Tools: React Hook Form, Axios, Recharts, SweetAlert2/Toast.
