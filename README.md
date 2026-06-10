@@ -177,4 +177,3 @@ The app will be running at `http://localhost:5173`
 <div align="center">
   Made with ❤️ by <a href="https://github.com/habib-web-dev1">habib-web-dev1</a>
 </div>
->>>>>>> 2629a0c (Readme file added)
